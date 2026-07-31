@@ -477,36 +477,39 @@
   /* ── Front-of-house / back-of-house switch ──
      The primary decision on an iPad walkthrough, so it sits ahead of the vendor
      filters and is deliberately larger than them. */
+  /* The topbar is white, so these follow the same light-pill convention as
+     .filter-btn: slate on #f1f5f9 when idle, saturated fill when active. */
   .area-switch {
     display: inline-flex;
     gap: 3px;
     padding: 3px;
-    background: rgba(255,255,255,.14);
-    border-radius: 10px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 22px;
     margin-right: 10px;
   }
   .area-btn {
     font: inherit;
-    font-size: 0.86rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    padding: 8px 15px;
-    min-height: 40px;
-    border: none;
-    border-radius: 7px;
+    padding: 7px 15px;
+    min-height: 36px;
+    border: 2px solid transparent;
+    border-radius: 20px;
     background: transparent;
-    color: rgba(255,255,255,.82);
+    color: #475569;
     cursor: pointer;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: background .13s, color .13s;
+    transition: background .15s, color .15s;
   }
-  .area-btn:hover { background: rgba(255,255,255,.16); color: #fff; }
-  .area-btn.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
-  .area-btn.amrit.active   { background: #fde68a; color: #78350f; }
-  .area-btn.kitchen.active { background: #bfdbfe; color: #1e3a8a; }
-  .area-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .area-btn:hover { background: #e2e8f0; color: #0f172a; }
+  .area-btn.active         { background: #0f172a; color: #fff; border-color: #0f172a; }
+  .area-btn.amrit.active   { background: #d97706; color: #fff; border-color: #d97706; }
+  .area-btn.kitchen.active { background: #2563EB; color: #fff; border-color: #2563EB; }
+  .area-btn:focus-visible  { outline: 2px solid #0f172a; outline-offset: 2px; }
   .area-n {
     font-size: 0.72rem;
     font-weight: 800;
@@ -952,7 +955,7 @@
 <div class="area-switch" id="areaSwitch" role="group" aria-label="Inventory area">
 <button class="area-btn active" data-area="all" onclick="setArea('all',this)">Everything <span class="area-n" id="area-n-all"></span></button>
 <button class="area-btn amrit" data-area="amrit" onclick="setArea('amrit',this)">☕ Amrit <span class="area-n" id="area-n-amrit"></span></button>
-<button class="area-btn kitchen" data-area="kitchen" onclick="setArea('kitchen',this)">🍳 Kitchen <span class="area-n" id="area-n-kitchen"></span></button>
+<button class="area-btn kitchen" data-area="kitchen" onclick="setArea('kitchen',this)">🍲 Kitchen <span class="area-n" id="area-n-kitchen"></span></button>
 </div>
 <div class="filter-buttons">
 <button class="filter-btn active" data-filter="all" onclick="filterVendors('all',this)">All Vendors</button>
@@ -972,7 +975,7 @@
 <button onclick="setArea('all')">Show everything</button>
 </div>
 <div class="area-notice for-kitchen">
-<span>🍳 <strong>Kitchen only</strong> — back-of-house items. Front-of-house (Amrit) items are hidden.</span>
+<span>🍲 <strong>Kitchen only</strong> — back-of-house items. Front-of-house (Amrit) items are hidden.</span>
 <button onclick="setArea('all')">Show everything</button>
 </div>
 <div class="price-disclaimer">
@@ -8486,7 +8489,7 @@ function initFromStorage() {
       const tag = document.createElement('span');
       tag.className = 'area-tag';
       tag.dataset.a = a;
-      tag.textContent = a === 'amrit' ? '☕ Amrit' : '🍳 Kitchen';
+      tag.textContent = a === 'amrit' ? '☕ Amrit' : '🍲 Kitchen';
       tag.title = 'Front-of-house (Amrit) or back-of-house (Kitchen) — click to switch';
       tag.setAttribute('role', 'button');
       tag.setAttribute('tabindex', '0');
@@ -8760,7 +8763,7 @@ function toggleItemArea(id) {
   const tag = row.querySelector('.area-tag');
   if (tag) {
     tag.dataset.a = next;
-    tag.textContent = next === 'amrit' ? '☕ Amrit' : '🍳 Kitchen';
+    tag.textContent = next === 'amrit' ? '☕ Amrit' : '🍲 Kitchen';
   }
   try {
     const raw = localStorage.getItem(PREFIX + 'itemArea');
