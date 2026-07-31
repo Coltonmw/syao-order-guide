@@ -474,6 +474,93 @@
   /* ── Filter reducer: one class owns all row/section visibility ── */
   .filtered-out { display: none !important; }
 
+  /* ── Front-of-house / back-of-house switch ──
+     The primary decision on an iPad walkthrough, so it sits ahead of the vendor
+     filters and is deliberately larger than them. */
+  .area-switch {
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    background: rgba(255,255,255,.14);
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  .area-btn {
+    font: inherit;
+    font-size: 0.86rem;
+    font-weight: 700;
+    padding: 8px 15px;
+    min-height: 40px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: rgba(255,255,255,.82);
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .13s, color .13s;
+  }
+  .area-btn:hover { background: rgba(255,255,255,.16); color: #fff; }
+  .area-btn.active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+  .area-btn.amrit.active   { background: #fde68a; color: #78350f; }
+  .area-btn.kitchen.active { background: #bfdbfe; color: #1e3a8a; }
+  .area-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .area-n {
+    font-size: 0.72rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    opacity: .62;
+  }
+  /* Bigger targets during a walkthrough, where this is used most. */
+  body.walk-mode .area-btn { font-size: 1rem; padding: 12px 20px; min-height: 52px; }
+
+  /* An active area filter hides a large part of the catalogue, so say so loudly
+     rather than letting someone think items have gone missing. */
+  .area-notice {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  body.area-amrit   .area-notice.for-amrit   { display: flex; background: #fffbeb; border-color: #fcd34d; color: #78350f; }
+  body.area-kitchen .area-notice.for-kitchen { display: flex; background: #eff6ff; border-color: #93c5fd; color: #1e3a8a; }
+  .area-notice button {
+    font: inherit; font-size: .8rem; font-weight: 700; cursor: pointer;
+    padding: 4px 10px; border-radius: 6px; border: 1px solid currentColor;
+    background: transparent; color: inherit; margin-left: auto;
+  }
+
+  /* Per-item area control, shown only in Edit Mode. */
+  .area-tag {
+    display: none;
+    margin-left: 8px;
+    padding: 1px 7px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+  body.edit-mode .area-tag { display: inline-block; }
+  .area-tag[data-a="amrit"]   { background: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  .area-tag[data-a="kitchen"] { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+  .area-tag:hover { filter: brightness(.94); }
+
+  @media (max-width: 820px) {
+    .area-switch { width: 100%; margin: 0 0 8px; justify-content: stretch; }
+    .area-btn { flex: 1; justify-content: center; padding: 10px 8px; }
+  }
+  @media print { .area-switch, .area-notice { display: none !important; } }
+
   /* ── Per-vendor flagged badge ── */
   .flag-count {
     display: inline-block;
@@ -825,6 +912,11 @@
 </div>
 </div>
 <div class="topbar-right">
+<div class="area-switch" id="areaSwitch" role="group" aria-label="Inventory area">
+<button class="area-btn active" data-area="all" onclick="setArea('all',this)">Everything <span class="area-n" id="area-n-all"></span></button>
+<button class="area-btn amrit" data-area="amrit" onclick="setArea('amrit',this)">☕ Amrit <span class="area-n" id="area-n-amrit"></span></button>
+<button class="area-btn kitchen" data-area="kitchen" onclick="setArea('kitchen',this)">🍳 Kitchen <span class="area-n" id="area-n-kitchen"></span></button>
+</div>
 <div class="filter-buttons">
 <button class="filter-btn active" data-filter="all" onclick="filterVendors('all',this)">All Vendors</button>
 <button class="filter-btn" data-filter="delivery" onclick="filterVendors('delivery',this)">📦 Delivery</button>
@@ -838,6 +930,14 @@
 <button class="action-btn export-btn" onclick="exportGuide()">⬇ Export / Share</button>
 </div>
 </div>
+<div class="area-notice for-amrit">
+<span>☕ <strong>Amrit only</strong> — front-of-house items. Back-of-house (Kitchen) items are hidden.</span>
+<button onclick="setArea('all')">Show everything</button>
+</div>
+<div class="area-notice for-kitchen">
+<span>🍳 <strong>Kitchen only</strong> — back-of-house items. Front-of-house (Amrit) items are hidden.</span>
+<button onclick="setArea('all')">Show everything</button>
+</div>
 <div class="price-disclaimer">
       ⚠️ <strong>Prices shown are last known purchase prices</strong> (as of early 2026) and are for reference only.
       Actual prices may vary — always verify current pricing at time of order.
@@ -845,7 +945,7 @@
         |   <strong>Typical Qty</strong> = usual order amount per order cycle.
     </div>
 <div class="content-area" id="contentArea">
-<section class="vendor-section" data-mode="none" data-type="delivery" id="vv">
+<section class="vendor-section" data-area="kitchen" data-mode="none" data-type="delivery" id="vv">
 <div class="vendor-card" style="border-color:#bfdbfe;background:#eff6ff">
 <div class="vendor-header" style="background:#1e3a8a">
 <div class="vendor-header-left">
@@ -1669,7 +1769,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="none" data-type="delivery" id="dairy">
+<section class="vendor-section" data-area="kitchen" data-mode="none" data-type="delivery" id="dairy">
 <div class="vendor-card" style="border-color:#bfdbfe;background:#eff6ff">
 <div class="vendor-header" style="background:#1e3a8a">
 <div class="vendor-header-left">
@@ -1709,7 +1809,7 @@
 <td class="item-notes">Item #150100</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="dairy__0__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__0__1" onchange="toggleFlag('dairy__0__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="dairy__0__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__0__1" onchange="toggleFlag('dairy__0__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Clover Organic Whole Milk Quarts<button class="retire-btn" id="ret-dairy__0__1" onclick="toggleRetire('dairy__0__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Qt</td>
 <td class="item-price">$2.97</td>
@@ -1774,7 +1874,7 @@
 <td class="item-notes">Item #481</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="dairy__1__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__1__1" onchange="toggleFlag('dairy__1__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="dairy__1__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__1__1" onchange="toggleFlag('dairy__1__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Clover Organic Half And Half Quarts<button class="retire-btn" id="ret-dairy__1__1" onclick="toggleRetire('dairy__1__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Qt</td>
 <td class="item-price">$4.27</td>
@@ -1792,7 +1892,7 @@
 <td class="item-notes">Item #360</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="dairy__1__3"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__1__3" onchange="toggleFlag('dairy__1__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="dairy__1__3" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__1__3" onchange="toggleFlag('dairy__1__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Clover Sour Cream 2/5#<button class="retire-btn" id="ret-dairy__1__3" onclick="toggleRetire('dairy__1__3')" title="Retire this item">Retire</button></td>
 <td class="item-pack">2/5# Case</td>
 <td class="item-price">$20.58</td>
@@ -1960,7 +2060,7 @@
 <td class="item-notes">Item #0688; +CRV</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="dairy__4__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__4__1" onchange="toggleFlag('dairy__4__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="dairy__4__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-dairy__4__1" onchange="toggleFlag('dairy__4__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Califia Organic Oat Milk<button class="retire-btn" id="ret-dairy__4__1" onclick="toggleRetire('dairy__4__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">6/48Oz Case</td>
 <td class="item-price">$28.28</td>
@@ -2004,7 +2104,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="none" data-type="delivery" id="unfi">
+<section class="vendor-section" data-area="kitchen" data-mode="none" data-type="delivery" id="unfi">
 <div class="vendor-card" style="border-color:#bfdbfe;background:#eff6ff">
 <div class="vendor-header" style="background:#1e3a8a">
 <div class="vendor-header-left">
@@ -2296,7 +2396,7 @@
 <td class="item-notes">Item #78671 / 072609-741219</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__4__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__4__1" onchange="toggleFlag('unfi__4__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__4__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__4__1" onchange="toggleFlag('unfi__4__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Alden's Organic Fudge Bar<button class="retire-btn" id="ret-unfi__4__1" onclick="toggleRetire('unfi__4__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">12/4/2.5Oz Case</td>
 <td class="item-price">$68.57</td>
@@ -2417,7 +2517,7 @@
 <td class="item-notes">Item #53269 / 745998-500193</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__6__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__6__1" onchange="toggleFlag('unfi__6__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__6__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__6__1" onchange="toggleFlag('unfi__6__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Equal Exchange Organic Peppermint Tea<button class="retire-btn" id="ret-unfi__6__1" onclick="toggleRetire('unfi__6__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">6/20 Bag Case</td>
 <td class="item-price">$29.34</td>
@@ -2444,7 +2544,7 @@
 <td class="item-notes">Item #00248 / 615357-111936</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__6__4"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__6__4" onchange="toggleFlag('unfi__6__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__6__4" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__6__4" onchange="toggleFlag('unfi__6__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Taylors Of Harrogate English Breakfast Tea<button class="retire-btn" id="ret-unfi__6__4" onclick="toggleRetire('unfi__6__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack">6/20 Bag Case</td>
 <td class="item-price">$20.59</td>
@@ -2453,7 +2553,7 @@
 <td class="item-notes">Item #33144 / 615357-118867</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__6__5"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__6__5" onchange="toggleFlag('unfi__6__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__6__5" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__6__5" onchange="toggleFlag('unfi__6__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Taylors Of Harrogate Decaf Breakfast Tea<button class="retire-btn" id="ret-unfi__6__5" onclick="toggleRetire('unfi__6__5')" title="Retire this item">Retire</button></td>
 <td class="item-pack">6/20 Bag Case</td>
 <td class="item-price">$20.59</td>
@@ -2610,7 +2710,7 @@
 <td class="item-notes"></td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__8__10"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__10" onchange="toggleFlag('unfi__8__10',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__8__10" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__10" onchange="toggleFlag('unfi__8__10',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Bob's Red Mill Flaxseed Meal Golden GF<button class="retire-btn" id="ret-unfi__8__10" onclick="toggleRetire('unfi__8__10')" title="Retire this item">Retire</button></td>
 <td class="item-pack">4/16 Oz Case</td>
 <td class="item-price">$16.81</td>
@@ -2682,7 +2782,7 @@
 <td class="item-notes"></td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__8__18"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__18" onchange="toggleFlag('unfi__8__18',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__8__18" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__18" onchange="toggleFlag('unfi__8__18',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Pero Instant Natural Beverage<button class="retire-btn" id="ret-unfi__8__18" onclick="toggleRetire('unfi__8__18')" title="Retire this item">Retire</button></td>
 <td class="item-pack">6/7 Oz Case</td>
 <td class="item-price">$44.65</td>
@@ -2727,7 +2827,7 @@
 <td class="item-notes">Assorted flavors</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="unfi__8__23"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__23" onchange="toggleFlag('unfi__8__23',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">Woodstock Organic Garbanzo Beans<button class="retire-btn" id="ret-unfi__8__23" onclick="toggleRetire('unfi__8__23')" title="Retire this item">Retire</button></td><td class="item-pack">6/110 Oz Case</td><td class="item-price">$66.11</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__23">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__23" maxlength="20" onblur="savePar('unfi__8__23',this.value)" onchange="savePar('unfi__8__23',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__23">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__23" maxlength="20" onblur="saveOqty('unfi__8__23',this.value)" onchange="saveOqty('unfi__8__23',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Organic. Item #58642 / 042563-017651</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__24"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__24" onchange="toggleFlag('unfi__8__24',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">MOM's Best Raisin Bran Cereal<button class="retire-btn" id="ret-unfi__8__24" onclick="toggleRetire('unfi__8__24')" title="Retire this item">Retire</button></td><td class="item-pack">10/22 Oz Case</td><td class="item-price">$46.54</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__24">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__24" maxlength="20" onblur="savePar('unfi__8__24',this.value)" onchange="savePar('unfi__8__24',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__24">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__24" maxlength="20" onblur="saveOqty('unfi__8__24',this.value)" onchange="saveOqty('unfi__8__24',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Item #75360 / 042400-286677</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__25"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__25" onchange="toggleFlag('unfi__8__25',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">Bulk Organic Rolled Oats #5<button class="retire-btn" id="ret-unfi__8__25" onclick="toggleRetire('unfi__8__25')" title="Retire this item">Retire</button></td><td class="item-pack">25 Lb Bag</td><td class="item-price">$36.17</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__25">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__25" maxlength="20" onblur="savePar('unfi__8__25',this.value)" onchange="savePar('unfi__8__25',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__25">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__25" maxlength="20" onblur="saveOqty('unfi__8__25',this.value)" onchange="saveOqty('unfi__8__25',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Organic, regular cut (not GF). Item #00585 / 026938-464912</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__26"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__26" onchange="toggleFlag('unfi__8__26',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">Reed's Real Ginger Ale<button class="retire-btn" id="ret-unfi__8__26" onclick="toggleRetire('unfi__8__26')" title="Retire this item">Retire</button></td><td class="item-pack">6/4/12 Oz Case</td><td class="item-price">$32.42</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__26">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__26" maxlength="20" onblur="savePar('unfi__8__26',this.value)" onchange="savePar('unfi__8__26',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__26">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__26" maxlength="20" onblur="saveOqty('unfi__8__26',this.value)" onchange="saveOqty('unfi__8__26',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Item #40306 / 008274-665000</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__27"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__27" onchange="toggleFlag('unfi__8__27',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">San Pellegrino Sparkling Mineral Water<button class="retire-btn" id="ret-unfi__8__27" onclick="toggleRetire('unfi__8__27')" title="Retire this item">Retire</button></td><td class="item-pack">4/6/250 Ml Case</td><td class="item-price">$25.39</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__27">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__27" maxlength="20" onblur="savePar('unfi__8__27',this.value)" onchange="savePar('unfi__8__27',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__27">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__27" maxlength="20" onblur="saveOqty('unfi__8__27',this.value)" onchange="saveOqty('unfi__8__27',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Item #27200 / 041508-800075. Also at Costco ($22.74/case +CRV)</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr></tbody>
+<tr data-item-id="unfi__8__23"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__23" onchange="toggleFlag('unfi__8__23',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">Woodstock Organic Garbanzo Beans<button class="retire-btn" id="ret-unfi__8__23" onclick="toggleRetire('unfi__8__23')" title="Retire this item">Retire</button></td><td class="item-pack">6/110 Oz Case</td><td class="item-price">$66.11</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__23">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__23" maxlength="20" onblur="savePar('unfi__8__23',this.value)" onchange="savePar('unfi__8__23',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__23">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__23" maxlength="20" onblur="saveOqty('unfi__8__23',this.value)" onchange="saveOqty('unfi__8__23',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Organic. Item #58642 / 042563-017651</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__24" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__24" onchange="toggleFlag('unfi__8__24',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">MOM's Best Raisin Bran Cereal<button class="retire-btn" id="ret-unfi__8__24" onclick="toggleRetire('unfi__8__24')" title="Retire this item">Retire</button></td><td class="item-pack">10/22 Oz Case</td><td class="item-price">$46.54</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__24">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__24" maxlength="20" onblur="savePar('unfi__8__24',this.value)" onchange="savePar('unfi__8__24',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__24">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__24" maxlength="20" onblur="saveOqty('unfi__8__24',this.value)" onchange="saveOqty('unfi__8__24',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Item #75360 / 042400-286677</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__25"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__25" onchange="toggleFlag('unfi__8__25',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">Bulk Organic Rolled Oats #5<button class="retire-btn" id="ret-unfi__8__25" onclick="toggleRetire('unfi__8__25')" title="Retire this item">Retire</button></td><td class="item-pack">25 Lb Bag</td><td class="item-price">$36.17</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__25">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__25" maxlength="20" onblur="savePar('unfi__8__25',this.value)" onchange="savePar('unfi__8__25',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__25">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__25" maxlength="20" onblur="saveOqty('unfi__8__25',this.value)" onchange="saveOqty('unfi__8__25',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Organic, regular cut (not GF). Item #00585 / 026938-464912</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__26"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__26" onchange="toggleFlag('unfi__8__26',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">Reed's Real Ginger Ale<button class="retire-btn" id="ret-unfi__8__26" onclick="toggleRetire('unfi__8__26')" title="Retire this item">Retire</button></td><td class="item-pack">6/4/12 Oz Case</td><td class="item-price">$32.42</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__26">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__26" maxlength="20" onblur="savePar('unfi__8__26',this.value)" onchange="savePar('unfi__8__26',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__26">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__26" maxlength="20" onblur="saveOqty('unfi__8__26',this.value)" onchange="saveOqty('unfi__8__26',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Item #40306 / 008274-665000</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr><tr data-item-id="unfi__8__27"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__8__27" onchange="toggleFlag('unfi__8__27',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td><td class="item-name">San Pellegrino Sparkling Mineral Water<button class="retire-btn" id="ret-unfi__8__27" onclick="toggleRetire('unfi__8__27')" title="Retire this item">Retire</button></td><td class="item-pack">4/6/250 Ml Case</td><td class="item-price">$25.39</td><td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__8__27">—</span><input class="cell-inp par-inp" id="par-inp-unfi__8__27" maxlength="20" onblur="savePar('unfi__8__27',this.value)" onchange="savePar('unfi__8__27',this.value)" placeholder="e.g. 2" type="text"/></td><td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__8__27">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__8__27" maxlength="20" onblur="saveOqty('unfi__8__27',this.value)" onchange="saveOqty('unfi__8__27',this.value)" placeholder="e.g. 1 cs" type="text"/></td><td class="item-notes">Item #27200 / 041508-800075. Also at Costco ($22.74/case +CRV)</td><td class="item-link"><a class="order-link order-link-vendor" href="https://www.unfi.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td></tr></tbody>
 </table>
 </div>
 </div>
@@ -2747,7 +2847,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="unfi__9__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__0" onchange="toggleFlag('unfi__9__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__9__0" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__0" onchange="toggleFlag('unfi__9__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Hibiscus<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__0" onclick="toggleRetire('unfi__9__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -2756,7 +2856,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No hibiscus tea appears in the guide or on any receipt. The vendor inference rests on concentration: of the 13 tea rows in the guide, 9 are UNFI (Frontier Co-Op Assam unfi__5__0; Equal Exchange Rooibos and Peppermint unfi__6__0/1; Stash Chamomile unfi__6__2; three Taylors of Harrogate unfi__6__3/4/5…</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="unfi__9__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__1" onchange="toggleFlag('unfi__9__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__9__1" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__1" onchange="toggleFlag('unfi__9__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Ginger Lemon<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__1" onclick="toggleRetire('unfi__9__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -2765,7 +2865,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No lemon-ginger tea row exists in the guide and no receipt line matches. Two data points favor UNFI: it supplies 9 of the guide's 13 tea rows including the contiguous unfi__6__* tea block, and it is the vendor for the guide's only ginger-forward tea, Organic India Tulsi Turmeric Ginger (unfi__6__6),… Possibly the same as “Bulk Organic Ginger Medallions” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="unfi__9__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__2" onchange="toggleFlag('unfi__9__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__9__2" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__2" onchange="toggleFlag('unfi__9__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Herbal blend<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__2" onclick="toggleRetire('unfi__9__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -2774,7 +2874,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No row is named &quot;Herbal blend,&quot; and the descriptor is generic enough that several guide rows could satisfy it, so no single product can be nominated. The vendor is still identifiable: of the caffeine-free herbal teas in the guide, 5 of 7 are UNFI (Equal Exchange Rooibos unfi__6__0, Equal Exchange Pe… Possibly the same as “Lundberg Wild Blend Rice” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="unfi__9__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__3" onchange="toggleFlag('unfi__9__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="unfi__9__3" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__3" onchange="toggleFlag('unfi__9__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Throat Coat<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__3" onclick="toggleRetire('unfi__9__3')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -2789,7 +2889,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="none" data-type="delivery" id="usfoods">
+<section class="vendor-section" data-area="kitchen" data-mode="none" data-type="delivery" id="usfoods">
 <div class="vendor-card" style="border-color:#bfdbfe;background:#eff6ff">
 <div class="vendor-header" style="background:#1e3a8a">
 <div class="vendor-header-left">
@@ -3088,7 +3188,7 @@
 <td class="item-notes">Item #9993818</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.chefstore.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="usfoods__3__2"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__3__2" onchange="toggleFlag('usfoods__3__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__3__2" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__3__2" onchange="toggleFlag('usfoods__3__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Unsalted Continental Butter, Chip (1Kg)<button class="retire-btn" id="ret-usfoods__3__2" onclick="toggleRetire('usfoods__3__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Case</td>
 <td class="item-price">$72.19</td>
@@ -3276,7 +3376,7 @@
 <td class="item-notes">Item #000437</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.chefstore.com/" style="border-color:#2563EB;color:#2563EB" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="usfoods__7__4"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__7__4" onchange="toggleFlag('usfoods__7__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__7__4" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__7__4" onchange="toggleFlag('usfoods__7__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Paper Bag, Carry-Out 6 Lb<button class="retire-btn" id="ret-usfoods__7__4" onclick="toggleRetire('usfoods__7__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Case</td>
 <td class="item-price">$18.49</td>
@@ -3361,7 +3461,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="usfoods__9__0"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__9__0" onchange="toggleFlag('usfoods__9__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__9__0" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__9__0" onchange="toggleFlag('usfoods__9__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Milk Chocolate Candy Bars<button class="retire-btn" id="ret-usfoods__9__0" onclick="toggleRetire('usfoods__9__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Each</td>
 <td class="item-price">$46.59</td>
@@ -3777,7 +3877,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="usfoods__10__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__0" onchange="toggleFlag('usfoods__10__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__0" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__0" onchange="toggleFlag('usfoods__10__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Cholula Hot Sauce<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__0" onclick="toggleRetire('usfoods__10__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3786,7 +3886,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Cholula is a glass-bottle hot sauce and US Foods is the only vendor with hot sauce in this data: two rows, glass bottle $4.09 and red plastic jug $18.99, both confirmed by receipt lines (the glass-bottle line shows two prices, $4.09 and $7.69, so there are likely two glass-bottle SKUs). The register… Possibly the same as “Hot Sauce, Red (Plastic Jug)” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__1" onchange="toggleFlag('usfoods__10__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__1" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__1" onchange="toggleFlag('usfoods__10__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Heinz Organic Ketchup<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__1" onclick="toggleRetire('usfoods__10__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3795,7 +3895,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Ketchup appears nowhere — not one guide row, not one receipt line, at any vendor. The only basis for naming a vendor is that every shelf-stable condiment in the guide is US Foods Chef'Store. Weigh that against real counter-evidence: the US Foods condiments are unbranded foodservice packs, whereas 'H…</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__2" onchange="toggleFlag('usfoods__10__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__2" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__2" onchange="toggleFlag('usfoods__10__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">French’s Organic Mustard<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__2" onclick="toggleRetire('usfoods__10__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3804,7 +3904,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: French's is yellow prepared mustard — a different product from the guide's dijon, so this is not a product match. The only prepared mustard anywhere in the data is that US Foods dijon (the only other 'mustard' hits are Milan's black mustard SEED and Berkeley Bowl's mustard GREENS, neither of which i… Possibly the same as “Dijon Mustard, Glass Jar” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__3" onchange="toggleFlag('usfoods__10__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__3" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__3" onchange="toggleFlag('usfoods__10__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Grey Poupon Mustard<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__3" onclick="toggleRetire('usfoods__10__3')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3813,7 +3913,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Grey Poupon is dijon, and the guide row is dijon in a glass jar — product type and packaging match exactly, and the row is corroborated by a US Foods receipt line at the same $13.99. The register does not print a brand, so it cannot be confirmed that the jar being bought is Grey Poupon rather than a…</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__4" onchange="toggleFlag('usfoods__10__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__4" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__4" onchange="toggleFlag('usfoods__10__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Tobasco<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__4" onclick="toggleRetire('usfoods__10__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3822,7 +3922,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Only two hot-sauce sources exist in the data, both US Foods Chef'Store: usfoods__9__32 'Hot Sauce, Glass Bottle (Shelf-Stable)' ($4.09, receipt SAUCE,HOT GLS BTL SH at $4.09/$7.69) and usfoods__9__25 'Hot Sauce, Red (Plastic Jug)'. Tabasco is a glass-bottle shelf-stable hot sauce, so the glass-bottl…</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__5" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__5" onchange="toggleFlag('usfoods__10__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__5" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__5" onchange="toggleFlag('usfoods__10__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Swiss Miss Milk Chocolate Powder<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__5" onclick="toggleRetire('usfoods__10__5')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3831,7 +3931,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Miscellaneous Food Stuff). Vendor set by Colton 2026-07-30 (best guess, not from a receipt). Possibly the same as “Milk Chocolate Candy Bars” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__6" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__6" onchange="toggleFlag('usfoods__10__6',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__6" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__6" onchange="toggleFlag('usfoods__10__6',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Frigo Cheese Heads String Cheese<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__6" onclick="toggleRetire('usfoods__10__6')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3840,7 +3940,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Beverage Reach-In Items). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__7" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__7" onchange="toggleFlag('usfoods__10__7',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__7" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__7" onchange="toggleFlag('usfoods__10__7',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Folgers Instant Classic Roast<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__7" onclick="toggleRetire('usfoods__10__7')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3849,7 +3949,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Coffees and Teas). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__8" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__8" onchange="toggleFlag('usfoods__10__8',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__8" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__8" onchange="toggleFlag('usfoods__10__8',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Raw Sugar<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__8" onclick="toggleRetire('usfoods__10__8')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3858,7 +3958,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Sweeteners). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__9" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__9" onchange="toggleFlag('usfoods__10__9',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__9" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__9" onchange="toggleFlag('usfoods__10__9',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Stevia<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__9" onclick="toggleRetire('usfoods__10__9')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3867,7 +3967,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Sweeteners). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__10" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__10" onchange="toggleFlag('usfoods__10__10',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__10" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__10" onchange="toggleFlag('usfoods__10__10',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">White Sugar<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__10" onclick="toggleRetire('usfoods__10__10')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3876,7 +3976,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Sweeteners). Vendor set by Colton 2026-07-30 (best guess, not from a receipt). Possibly the same as “Distilled White Vinegar” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__11" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__11" onchange="toggleFlag('usfoods__10__11',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__11" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__11" onchange="toggleFlag('usfoods__10__11',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Cheerios<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__11" onclick="toggleRetire('usfoods__10__11')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3885,7 +3985,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Cereals and Snacks). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__12" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__12" onchange="toggleFlag('usfoods__10__12',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__12" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__12" onchange="toggleFlag('usfoods__10__12',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Smaller white paper bags<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__12" onclick="toggleRetire('usfoods__10__12')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3894,7 +3994,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (To Go Items). Vendor inferred, not read off a receipt. Why: US Foods holds the only paper carry-out bags in the guide, and the 2 Lb is the smaller of its two sizes — a natural fit for 'Smaller.' I am stopping short of SOURCED_FROM_GUIDE because the checklist deliberately distinguishes white from brown and the guide row states no color; small carry-out bags c…</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="usfoods__10__13" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__13" onchange="toggleFlag('usfoods__10__13',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="usfoods__10__13" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__13" onchange="toggleFlag('usfoods__10__13',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Dishwashing detergent<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__13" onclick="toggleRetire('usfoods__10__13')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -3909,7 +4009,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="order" data-type="online" id="amazon">
+<section class="vendor-section" data-area="amrit" data-mode="order" data-type="online" id="amazon">
 <div class="vendor-card" style="border-color:#a7f3d0;background:#ecfdf5">
 <div class="vendor-header" style="background:#065f46">
 <div class="vendor-header-left">
@@ -4319,7 +4419,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="order" data-type="online" id="webstaurant">
+<section class="vendor-section" data-area="amrit" data-mode="order" data-type="online" id="webstaurant">
 <div class="vendor-card" style="border-color:#a7f3d0;background:#ecfdf5">
 <div class="vendor-header" style="background:#065f46">
 <div class="vendor-header-left">
@@ -4663,7 +4763,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="order" data-type="online" id="bettymills">
+<section class="vendor-section" data-area="amrit" data-mode="order" data-type="online" id="bettymills">
 <div class="vendor-card" style="border-color:#a7f3d0;background:#ecfdf5">
 <div class="vendor-header" style="background:#065f46">
 <div class="vendor-header-left">
@@ -4710,7 +4810,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="order" data-type="online" id="econoco">
+<section class="vendor-section" data-area="amrit" data-mode="order" data-type="online" id="econoco">
 <div class="vendor-card" style="border-color:#a7f3d0;background:#ecfdf5">
 <div class="vendor-header" style="background:#065f46">
 <div class="vendor-header-left">
@@ -4757,7 +4857,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="order" data-type="online" id="vxb">
+<section class="vendor-section" data-area="amrit" data-mode="order" data-type="online" id="vxb">
 <div class="vendor-card" style="border-color:#a7f3d0;background:#ecfdf5">
 <div class="vendor-header" style="background:#065f46">
 <div class="vendor-header-left">
@@ -4804,7 +4904,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="berkeleybowl">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="berkeleybowl">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -4836,7 +4936,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="berkeleybowl__0__0"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__0__0" onchange="toggleFlag('berkeleybowl__0__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__0__0" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__0__0" onchange="toggleFlag('berkeleybowl__0__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Udi's GF Delicious Whole Grain Sandwich Bread (Frozen)<button class="retire-btn" id="ret-berkeleybowl__0__0" onclick="toggleRetire('berkeleybowl__0__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack">12 Oz Loaf</td>
 <td class="item-price">$8.79</td>
@@ -4854,7 +4954,7 @@
 <td class="item-notes"></td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://shop.berkeleybowl.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="berkeleybowl__0__2"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__0__2" onchange="toggleFlag('berkeleybowl__0__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__0__2" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__0__2" onchange="toggleFlag('berkeleybowl__0__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Oroweat Schwarzwalder Dark Rye Bread<button class="retire-btn" id="ret-berkeleybowl__0__2" onclick="toggleRetire('berkeleybowl__0__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack">16 Oz Loaf</td>
 <td class="item-price">$7.29</td>
@@ -4872,7 +4972,7 @@
 <td class="item-notes"></td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://shop.berkeleybowl.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="berkeleybowl__0__4"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__0__4" onchange="toggleFlag('berkeleybowl__0__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__0__4" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__0__4" onchange="toggleFlag('berkeleybowl__0__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Orowheat Organic 100% Whole Grain Bread<button class="retire-btn" id="ret-berkeleybowl__0__4" onclick="toggleRetire('berkeleybowl__0__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack">765G</td>
 <td class="item-price">$8.29</td>
@@ -5380,7 +5480,7 @@
 <td class="item-notes"></td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://shop.berkeleybowl.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="berkeleybowl__2__8"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__2__8" onchange="toggleFlag('berkeleybowl__2__8',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__2__8" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__2__8" onchange="toggleFlag('berkeleybowl__2__8',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Califia Farms Organic Unsweetened Almond Milk<button class="retire-btn" id="ret-berkeleybowl__2__8" onclick="toggleRetire('berkeleybowl__2__8')" title="Retire this item">Retire</button></td>
 <td class="item-pack">48 Oz</td>
 <td class="item-price">$7.19</td>
@@ -5490,7 +5590,7 @@
 <td class="item-notes"></td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://shop.berkeleybowl.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="berkeleybowl__3__4"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__3__4" onchange="toggleFlag('berkeleybowl__3__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__3__4" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__3__4" onchange="toggleFlag('berkeleybowl__3__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Organic Dark Maple Syrup (Bulk)<button class="retire-btn" id="ret-berkeleybowl__3__4" onclick="toggleRetire('berkeleybowl__3__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Per Lb</td>
 <td class="item-price">$21.49</td>
@@ -5691,7 +5791,7 @@
 <td class="item-notes">Bulk Foods — by weight</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__5__2"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__5__2" onchange="toggleFlag('berkeleybowl__5__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__5__2" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__5__2" onchange="toggleFlag('berkeleybowl__5__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Thomas' Sourdough English Muffins<button class="retire-btn" id="ret-berkeleybowl__5__2" onclick="toggleRetire('berkeleybowl__5__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack">12 Oz Each</td>
 <td class="item-price">$7.09</td>
@@ -5728,7 +5828,7 @@
 <td class="item-notes">Produce section</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://shop.berkeleybowl.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="berkeleybowl__6__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__6__1" onchange="toggleFlag('berkeleybowl__6__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__6__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__6__1" onchange="toggleFlag('berkeleybowl__6__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Celestial Seasonings Bengal Spice Herbal Tea<button class="retire-btn" id="ret-berkeleybowl__6__1" onclick="toggleRetire('berkeleybowl__6__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">20 Bags</td>
 <td class="item-price">$4.49</td>
@@ -6011,7 +6111,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="berkeleybowl__8__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__0" onchange="toggleFlag('berkeleybowl__8__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__0" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__0" onchange="toggleFlag('berkeleybowl__8__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Canyon House GF 100% Grain Bread<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__0" onclick="toggleRetire('berkeleybowl__8__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6020,7 +6120,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor inferred, not read off a receipt. Why: No 'Canyon' (Canyon Bakehouse) row in the guide and no such receipt line. Every BRANDED gluten-free loaf in the data sits at Berkeley Bowl — four rows (Udi's Whole Grain, Udi's White, Udi's Omega Flax, Rr GF White Sourdough), three of them corroborated by Berkeley Bowl receipt lines UDI GF BRD MULTI… Possibly the same as “Orowheat Organic 100% Whole Grain Bread” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__8__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__1" onchange="toggleFlag('berkeleybowl__8__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__1" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__1" onchange="toggleFlag('berkeleybowl__8__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Oats GF Ancient Grain Omega Flax &amp; Fiber<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__1" onclick="toggleRetire('berkeleybowl__8__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6029,7 +6129,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor read off a July 2026 receipt. Possibly the same as “Udi's Gluten Free Omega Flax &amp; Fiber Bread (Frozen)” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__8__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__2" onchange="toggleFlag('berkeleybowl__8__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__2" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__2" onchange="toggleFlag('berkeleybowl__8__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Earth Balance Original Spread<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__2" onclick="toggleRetire('berkeleybowl__8__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6038,7 +6138,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__8__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__3" onchange="toggleFlag('berkeleybowl__8__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__3" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__3" onchange="toggleFlag('berkeleybowl__8__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Smucker's Concord Grape Jam<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__3" onclick="toggleRetire('berkeleybowl__8__3')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6047,7 +6147,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__8__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__4" onchange="toggleFlag('berkeleybowl__8__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__4" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__4" onchange="toggleFlag('berkeleybowl__8__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Sunflower Seed Spread<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__4" onclick="toggleRetire('berkeleybowl__8__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6056,7 +6156,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Nut and Seed Butters). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__8__5" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__5" onchange="toggleFlag('berkeleybowl__8__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__5" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__5" onchange="toggleFlag('berkeleybowl__8__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Mixed Nuts<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__5" onclick="toggleRetire('berkeleybowl__8__5')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6065,7 +6165,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Beverage Reach-In Items). Vendor inferred, not read off a receipt. Why: No mixed-nuts product exists in either dataset. Nuts are spread across four vendors, so this is weaker than a clean single-vendor pattern: UNFI has wholesale case sizes (Bulk Organic Walnuts unfi__1__5, Woodstock Pecan Halves unfi__1__7, Bulk Organic Cashew Pieces unfi__8__8), Milan has 5 lb ethnic-… Possibly the same as “Organic Raw Brazil Nuts (Bulk)” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="berkeleybowl__8__6" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__6" onchange="toggleFlag('berkeleybowl__8__6',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="berkeleybowl__8__6" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__6" onchange="toggleFlag('berkeleybowl__8__6',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Seventh Generation Table Spray<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__6" onclick="toggleRetire('berkeleybowl__8__6')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6080,7 +6180,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="costco">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="costco">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -6112,7 +6212,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="costco__0__0"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__0__0" onchange="toggleFlag('costco__0__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__0__0" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__0__0" onchange="toggleFlag('costco__0__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Ks Almond Butter<button class="retire-btn" id="ret-costco__0__0" onclick="toggleRetire('costco__0__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Each</td>
 <td class="item-price">$8.29</td>
@@ -6121,7 +6221,7 @@
 <td class="item-notes">Item #853635 Was $7.99 before Jul 2026 receipts.</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.costco.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="costco__0__1"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__0__1" onchange="toggleFlag('costco__0__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__0__1" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__0__1" onchange="toggleFlag('costco__0__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Ks Peanut Butter<button class="retire-btn" id="ret-costco__0__1" onclick="toggleRetire('costco__0__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Each</td>
 <td class="item-price">$9.99</td>
@@ -6139,7 +6239,7 @@
 <td class="item-notes">Item #1032932</td>
 <td class="item-link"><a class="order-link order-link-vendor" href="https://www.costco.com/" style="border-color:#d97706;color:#d97706" target="_blank">Visit Vendor</a></td>
 </tr>
-<tr data-item-id="costco__0__3"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__0__3" onchange="toggleFlag('costco__0__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__0__3" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__0__3" onchange="toggleFlag('costco__0__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Organic Raisins<button class="retire-btn" id="ret-costco__0__3" onclick="toggleRetire('costco__0__3')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Each</td>
 <td class="item-price">$10.99</td>
@@ -6336,7 +6436,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="costco__4__0"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__4__0" onchange="toggleFlag('costco__4__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__4__0" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__4__0" onchange="toggleFlag('costco__4__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">San Pellegrino Mineral Water<button class="retire-btn" id="ret-costco__4__0" onclick="toggleRetire('costco__4__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Case</td>
 <td class="item-price">$22.74</td>
@@ -6403,7 +6503,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="costco__6__0"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__6__0" onchange="toggleFlag('costco__6__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__6__0" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__6__0" onchange="toggleFlag('costco__6__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Chobani Yogurt (Variety Pack)<button class="retire-btn" id="ret-costco__6__0" onclick="toggleRetire('costco__6__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Each</td>
 <td class="item-price">$17.89</td>
@@ -6646,7 +6746,7 @@
 <td class="item-notes">name expanded from a truncated receipt line — From Jul 2026 receipts.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="costco__6__27"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__6__27" onchange="toggleFlag('costco__6__27',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__6__27" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__6__27" onchange="toggleFlag('costco__6__27',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Ziploc Storage Bags Variety Pack<button class="retire-btn" id="ret-costco__6__27" onclick="toggleRetire('costco__6__27')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Variety Pack</td>
 <td class="item-price">$14.49</td>
@@ -6709,7 +6809,7 @@
 <td class="item-notes">name expanded from a truncated receipt line — From Jul 2026 receipts.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="costco__6__34"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__6__34" onchange="toggleFlag('costco__6__34',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__6__34" data-area="amrit"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__6__34" onchange="toggleFlag('costco__6__34',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Kirkland Signature Ice Cream Bars<button class="retire-btn" id="ret-costco__6__34" onclick="toggleRetire('costco__6__34')" title="Retire this item">Retire</button></td>
 <td class="item-pack">Each</td>
 <td class="item-price">$12.99</td>
@@ -6783,7 +6883,7 @@
 </tr>
 </thead>
 <tbody>
-<tr data-item-id="costco__7__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__0" onchange="toggleFlag('costco__7__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__7__0" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__0" onchange="toggleFlag('costco__7__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Rudi's GF Sourdough Bread + Regular Sourdough<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__0" onclick="toggleRetire('costco__7__0')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6792,7 +6892,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor read off a July 2026 receipt. Possibly the same as “Sourdough Bread” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="costco__7__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__1" onchange="toggleFlag('costco__7__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__7__1" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__1" onchange="toggleFlag('costco__7__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Bagels - Wheat<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__1" onclick="toggleRetire('costco__7__1')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6801,7 +6901,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor inferred, not read off a receipt. Why: No wheat bagel exists in the guide or on any receipt. All four bagel rows in the guide are Costco, three confirmed by Costco receipt lines ET BAGEL 8CT, PL BAGEL 8CT, PARM BAGEL 8; the only non-Costco bagel anywhere is TJ's Gluten Free Almond Flour Bagels. Costco is where bagels are bought, but the … Possibly the same as “Bagels” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="costco__7__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__2" onchange="toggleFlag('costco__7__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__7__2" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__2" onchange="toggleFlag('costco__7__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Strauss Organic Low Fat European Style Yogurt<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__2" onclick="toggleRetire('costco__7__2')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6810,7 +6910,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Milks (Dairy &amp; Non-Dairy)). Vendor read off a July 2026 receipt. Possibly the same as “Organic 2% Low-Fat Yogurt” — check before ordering.</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="costco__7__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__3" onchange="toggleFlag('costco__7__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__7__3" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__3" onchange="toggleFlag('costco__7__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Snack size storage (not frozen)<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__3" onclick="toggleRetire('costco__7__3')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6819,7 +6919,7 @@
 <td class="item-notes">From the Amrit Running Low walkthrough list (Zip Lock Storage Bags). Vendor inferred, not read off a receipt. Why: No snack-size bag appears in any guide row or receipt line. Only two Ziploc products exist in the data: Amazon's quart FREEZER bags and Costco's &quot;Ziploc Storage Bags Variety Pack&quot; ($14.49, confirmed on the 2026-07-17 Costco receipt as ZIPLC VTY PK). Costco is the only non-freezer (&quot;storage&quot;) Ziploc …</td>
 <td class="item-link"></td>
 </tr>
-<tr data-item-id="costco__7__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__4" onchange="toggleFlag('costco__7__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<tr data-item-id="costco__7__4" data-area="amrit" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__4" onchange="toggleFlag('costco__7__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
 <td class="item-name">Pint size (not frozen)<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__4" onclick="toggleRetire('costco__7__4')" title="Retire this item">Retire</button></td>
 <td class="item-pack"></td>
 <td class="item-price"></td>
@@ -6834,7 +6934,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="milan">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="milan">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -7319,7 +7419,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="traderjoes">
+<section class="vendor-section" data-area="amrit" data-mode="checklist" data-type="instore" id="traderjoes">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -7849,7 +7949,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="viks">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="viks">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -7953,7 +8053,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="target">
+<section class="vendor-section" data-area="amrit" data-mode="checklist" data-type="instore" id="target">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -7999,7 +8099,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="mitierra">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="mitierra">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -8090,7 +8190,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="paknsave">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="paknsave">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -8136,7 +8236,7 @@
 </div>
 </div>
 </section>
-<section class="vendor-section" data-mode="checklist" data-type="instore" id="wholefoods">
+<section class="vendor-section" data-area="kitchen" data-mode="checklist" data-type="instore" id="wholefoods">
 <div class="vendor-card" style="border-color:#fde68a;background:#fffbeb">
 <div class="vendor-header" style="background:#78350f">
 <div class="vendor-header-left">
@@ -8270,7 +8370,7 @@ function rowName(row) {
   const clone = cell.cloneNode(true);
   // Strip the controls and every badge so the display name stays clean — these
   // are decorations on the cell, not part of the product name.
-  clone.querySelectorAll('.retire-btn, .mfr-sku, .unconfirmed').forEach(b => b.remove());
+  clone.querySelectorAll('.retire-btn, .mfr-sku, .unconfirmed, .area-tag').forEach(b => b.remove());
   return clone.textContent.replace(/\s+/g, ' ').trim();
 }
 // Manufacturer part number (e.g. World Centric "BO-PA-8") — what's printed on
@@ -8314,6 +8414,11 @@ function resellerSku(row, url) {
 function initFromStorage() {
   loadFlagged();
   const retired = getRetiredList();
+  // Per-item area overrides saved on this device, applied over the vendor default.
+  let ITEM_AREA = {};
+  try { ITEM_AREA = JSON.parse(localStorage.getItem(PREFIX + 'itemArea') || '{}'); }
+  catch (e) { ITEM_AREA = {}; }
+
   document.querySelectorAll('tr[data-item-id]').forEach(row => {
     const id = row.dataset.itemId;
 
@@ -8333,6 +8438,28 @@ function initFromStorage() {
     if (mfrSku) row.dataset.mfrSku = mfrSku;
     const rSku = resellerSku(row, url);
     if (rSku) row.dataset.sku = rSku;
+
+    // Area: any saved per-item override wins over the vendor default.
+    if (ITEM_AREA[id]) row.dataset.area = ITEM_AREA[id];
+    // Edit-Mode control for flipping this row's area. Injected rather than baked
+    // into 632 rows; guarded so a re-exported file does not accumulate copies.
+    const nameCell = row.querySelector('.item-name');
+    if (nameCell && !nameCell.querySelector('.area-tag')) {
+      const a = areaOf(row);
+      const tag = document.createElement('span');
+      tag.className = 'area-tag';
+      tag.dataset.a = a;
+      tag.textContent = a === 'amrit' ? '☕ Amrit' : '🍳 Kitchen';
+      tag.title = 'Front-of-house (Amrit) or back-of-house (Kitchen) — click to switch';
+      tag.setAttribute('role', 'button');
+      tag.setAttribute('tabindex', '0');
+      tag.addEventListener('click', () => toggleItemArea(id));
+      tag.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleItemArea(id); }
+      });
+      const btn = nameCell.querySelector('.retire-btn');
+      nameCell.insertBefore(tag, btn || null);
+    }
 
     // Cache searchable text once (name/pack/price/notes/both SKUs) so search does
     // not match button labels like "Retire" or link text like "Order".
@@ -8366,7 +8493,13 @@ function initFromStorage() {
     }
   });
   refreshFlagUI();
-  applyFilters();
+
+  // Restore the area view last used on this device. Do it through setArea() so
+  // the button state, the body class and the banner all stay in step.
+  let savedArea = 'all';
+  try { savedArea = localStorage.getItem(PREFIX + 'area') || 'all'; } catch (e) {}
+  if (savedArea !== 'amrit' && savedArea !== 'kitchen') savedArea = 'all';
+  setArea(savedArea);
 }
 
 // ── Save par / oqty ──────────────────────────────────────────
@@ -8498,6 +8631,17 @@ function toggleShowRetired() {
 let activeType   = 'all';
 let searchQuery  = '';
 let flaggedOnly  = false;
+let activeArea   = 'all';   // 'all' | 'amrit' | 'kitchen'
+
+// Front-of-house (Amrit) vs back-of-house (Kitchen). The vendor sets the default,
+// but the split is not absolute — an item bought from a back-of-house vendor can
+// still be an Amrit item (Orowheat bread from Berkeley Bowl, Cheerios from
+// Chef'Store), so a row may override its section with its own data-area.
+function areaOf(row) {
+  if (row.dataset.area) return row.dataset.area;
+  const sec = row.closest('.vendor-section');
+  return (sec && sec.dataset.area) || 'kitchen';
+}
 
 function applyFilters() {
   document.querySelectorAll('.vendor-section').forEach(vs => {
@@ -8510,7 +8654,8 @@ function applyFilters() {
       cat.querySelectorAll('tbody tr[data-item-id]').forEach(row => {
         const id = row.dataset.itemId;
         let show = true;
-        if (flaggedOnly && !flaggedSet.has(id)) show = false;
+        if (activeArea !== 'all' && areaOf(row) !== activeArea) show = false;
+        if (show && flaggedOnly && !flaggedSet.has(id)) show = false;
         if (show && searchQuery && (row.dataset.searchText || '').indexOf(searchQuery) === -1) show = false;
         row.classList.toggle('filtered-out', !show);
         // A retired row is hidden by its own CSS rule, so it must not keep an
@@ -8524,13 +8669,69 @@ function applyFilters() {
       if (catHasVisible) vendorHasVisible = true;
     });
 
-    const showVendor = typeOk && (vendorHasVisible || (!searchQuery && !flaggedOnly));
+    // A vendor with nothing left to show is hidden. The fallback that keeps an
+    // empty vendor on screen only applies when no narrowing filter is active —
+    // an area filter counts, or Kitchen would still list every Amrit-only vendor.
+    const noNarrowing = !searchQuery && !flaggedOnly && activeArea === 'all';
+    const showVendor = typeOk && (vendorHasVisible || noNarrowing);
     vs.classList.toggle('filtered-out', !showVendor);
   });
 
   document.querySelectorAll('.nav-link').forEach(a => {
-    a.style.opacity = (activeType === 'all' || a.dataset.type === activeType) ? '1' : '0.35';
+    const sec = document.getElementById(a.getAttribute('href').slice(1));
+    const areaOk = activeArea === 'all' || !sec ||
+      !sec.classList.contains('filtered-out');
+    const typeOk = (activeType === 'all' || a.dataset.type === activeType);
+    a.style.opacity = (typeOk && areaOk) ? '1' : '0.35';
   });
+  refreshAreaCounts();
+}
+
+// ── Area switch ───────────────────────────────────────────────
+function setArea(area, btn) {
+  activeArea = area;
+  document.querySelectorAll('.area-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.area === area));
+  document.body.classList.toggle('area-amrit', area === 'amrit');
+  document.body.classList.toggle('area-kitchen', area === 'kitchen');
+  try { localStorage.setItem(PREFIX + 'area', area); } catch (e) {}
+  applyFilters();
+}
+
+function refreshAreaCounts() {
+  let amrit = 0, kitchen = 0;
+  document.querySelectorAll('tr[data-item-id]').forEach(r => {
+    if (r.classList.contains('retired-row')) return;
+    if (areaOf(r) === 'amrit') amrit++; else kitchen++;
+  });
+  const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n; };
+  set('area-n-all', amrit + kitchen);
+  set('area-n-amrit', amrit);
+  set('area-n-kitchen', kitchen);
+}
+
+// Flip one item between areas. The vendor default is only a rule of thumb, so
+// this is how it gets corrected in place; the change rides along in Export/Share
+// because the exporter snapshots the live DOM.
+function toggleItemArea(id) {
+  const row = document.querySelector('tr[data-item-id="' + id + '"]');
+  if (!row) return;
+  const next = areaOf(row) === 'amrit' ? 'kitchen' : 'amrit';
+  const sec = row.closest('.vendor-section');
+  if (sec && sec.dataset.area === next) delete row.dataset.area;  // back to default
+  else row.dataset.area = next;
+  const tag = row.querySelector('.area-tag');
+  if (tag) {
+    tag.dataset.a = next;
+    tag.textContent = next === 'amrit' ? '☕ Amrit' : '🍳 Kitchen';
+  }
+  try {
+    const raw = localStorage.getItem(PREFIX + 'itemArea');
+    const map = raw ? JSON.parse(raw) : {};
+    if (sec && sec.dataset.area === next) delete map[id]; else map[id] = next;
+    localStorage.setItem(PREFIX + 'itemArea', JSON.stringify(map));
+  } catch (e) {}
+  applyFilters();
 }
 
 // ── Filter entry points ───────────────────────────────────────
