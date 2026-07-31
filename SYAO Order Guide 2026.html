@@ -575,6 +575,43 @@
   }
   .flag-count[hidden] { display: none; }
 
+  /* ── Order-sheet bits in the review panel ── */
+  .rp-sku {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #065f46;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-right: 8px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+  .rp-line {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #065f46;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .rp-subtotal {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #065f46;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 5px;
+    padding: 2px 9px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    cursor: help;
+  }
+  .rp-subtotal em { font-style: normal; font-weight: 600; color: #b45309; font-size: 0.72rem; }
+
   /* ── Manufacturer SKU chip ──
      The carton on the shelf is printed with the MANUFACTURER's part number, not
      the reseller's item number, so this has to stay visible in Walkthrough Mode
@@ -8856,6 +8893,8 @@ function renderGroup(g) {
           '⧉ Copy ' + skus.length + ' item number' + (skus.length === 1 ? '' : 's') + '</button>';
       }
     }
+    actions += '<button class="rp-act rp-noprint" onclick="copyOrderSheet(\'' +
+      esc(g.vendorId) + '\')">⧉ Order sheet</button>';
     if (noUrl.length) {
       actions += '<button class="rp-act warn rp-noprint" ' +
         'onclick="alert(\'' + noUrl.length + ' flagged item(s) from this vendor have no ' +
@@ -8868,11 +8907,22 @@ function renderGroup(g) {
       '" target="_blank" rel="noopener">↗ Vendor site</a>';
   }
 
+  // For an order-mode vendor the panel doubles as the order sheet, so it carries
+  // the item number you type in and a line total you can check the cart against.
+  let subtotal = 0, priced = 0, unpriced = 0;
   const items = g.items.map(i => {
     const meta = [i.pack, i.price].filter(Boolean).join(' · ');
     const qty  = i.oqty || i.par;
+    const n    = itemQty(i);
+    const unit = parseMoney(i.price);
+    let lineTotal = null;
+    if (unit !== null) { lineTotal = unit * n; subtotal += lineTotal; priced++; }
+    else unpriced++;
     return '<li class="rp-item">' +
       '<span class="rp-box"></span>' +
+      (g.mode === 'order' && i.sku
+        ? '<span class="rp-sku" title="Item number — paste this into the vendor\'s search">'
+          + esc(i.sku) + '</span>' : '') +
       '<span class="rp-item-name">' + esc(i.name) +
         // Manufacturer SKU prints on the checklist so whoever is holding the box
         // can match it; the reseller item number is for whoever places the order.
@@ -8884,6 +8934,8 @@ function renderGroup(g) {
       '</span>' +
       (qty ? '<span class="rp-qty">' + esc(qty) + '</span>' : '') +
       (meta ? '<span class="rp-item-meta">' + esc(meta) + '</span>' : '') +
+      (g.mode === 'order' && lineTotal !== null && n > 1
+        ? '<span class="rp-line">= ' + money(lineTotal) + '</span>' : '') +
       (g.mode === 'order' && !i.url ? '<span class="rp-nolink">NO LINK</span>' : '') +
       (i.url ? ' <a class="rp-act rp-noprint" href="' + esc(i.url) +
                '" target="_blank" rel="noopener">Order ↗</a>' : '') +
@@ -8897,10 +8949,35 @@ function renderGroup(g) {
         esc(MODE_LABEL[g.mode] || g.mode) + '</span>' +
       '<span class="rp-item-meta">' + g.items.length + ' item' +
         (g.items.length === 1 ? '' : 's') + '</span>' +
+      // An estimate, not a quote — last known prices, no shipping or tax. Its job
+      // is to give you a number to sanity-check the real cart against.
+      (g.mode === 'order' && priced
+        ? '<span class="rp-subtotal" title="Estimate from last known prices — ' +
+          'excludes shipping and tax. Check the real cart against it.">~' + money(subtotal) +
+          (unpriced ? ' <em>+' + unpriced + ' unpriced</em>' : '') + '</span>' : '') +
       '<span class="rp-group-spacer"></span>' + actions +
     '</div>' +
     '<ul class="rp-list">' + items + '</ul>' +
   '</div>';
+}
+
+// ── Order-sheet helpers ───────────────────────────────────────
+// "2 cs" / "3" / "1 case" -> 2 / 3 / 1. Anything without a leading count is 1.
+function itemQty(i) {
+  const m = /^\s*(\d+(?:\.\d+)?)/.exec(i.oqty || i.par || '');
+  return m ? parseFloat(m[1]) : 1;
+}
+// "$84.49" -> 84.49; "$1,234.00" -> 1234; blank or unparseable -> null, never 0,
+// so an unpriced row is reported as unpriced rather than silently costing nothing.
+function parseMoney(s) {
+  if (!s) return null;
+  const m = /(\d[\d,]*(?:\.\d+)?)/.exec(String(s));
+  if (!m) return null;
+  const n = parseFloat(m[1].replace(/,/g, ''));
+  return isFinite(n) ? n : null;
+}
+function money(n) {
+  return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 // ── Cart-building helpers (stop at "cart is built") ───────────
@@ -8915,6 +8992,36 @@ function openVendorTabs(vendorId) {
     alert(blocked + ' of ' + urls.length + ' tabs were blocked by the popup blocker.\n\n' +
       'Allow pop-ups for this page, or use "Copy links" and paste them into your browser.');
   }
+}
+
+// A plain-text order sheet for one vendor. Every action on the vendor's own site
+// stays a human click — this just means nobody has to retype item numbers or
+// tot up what the order should come to.
+function copyOrderSheet(vendorId) {
+  const g = collectFlagged().find(x => x.vendorId === vendorId);
+  if (!g) return;
+  const lines = [g.vendorName + ' — order sheet (' + new Date().toLocaleDateString() + ')', ''];
+  let subtotal = 0, unpriced = 0;
+  g.items.forEach(i => {
+    const n = itemQty(i);
+    const unit = parseMoney(i.price);
+    const bits = [];
+    bits.push(String(n).padStart(3, ' ') + ' ×');
+    if (i.sku) bits.push(i.sku.padEnd(14, ' '));
+    bits.push(i.name);
+    if (i.pack) bits.push('(' + i.pack + ')');
+    if (unit !== null) { subtotal += unit * n; bits.push('@ ' + money(unit)); }
+    else { unpriced++; bits.push('@ price unknown'); }
+    if (i.mfrSku) bits.push('[box #' + i.mfrSku + ']');
+    lines.push('  ' + bits.join('  '));
+  });
+  lines.push('');
+  lines.push('  Estimated subtotal: ' + money(subtotal) +
+    '   (last known prices, excludes shipping and tax)');
+  if (unpriced) lines.push('  ' + unpriced + ' item(s) have no recorded price and are not in that total.');
+  lines.push('');
+  lines.push('  Check the real cart against this before paying. Nothing here places an order.');
+  copyText(lines.join('\n'), 'Order sheet copied for ' + g.vendorName + '.');
 }
 
 function copyVendorLinks(vendorId) {
