@@ -510,6 +510,29 @@
   body.walk-mode .mfr-sku { font-size: 0.8rem; padding: 2px 8px; }
   tr.flagged-row .mfr-sku { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
 
+  /* ── Unconfirmed-source marker ──
+     Rows whose vendor is a best guess rather than something read off a receipt.
+     Deliberately visible during a walkthrough so nobody treats a guess as fact. */
+  .unconfirmed {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 7px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #9a3412;
+    background: #ffedd5;
+    border: 1px dashed #fb923c;
+    border-radius: 4px;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: help;
+  }
+  body.walk-mode .unconfirmed { font-size: 0.78rem; padding: 2px 9px; }
+  tr[data-source="guess"] .item-price:empty::after {
+    content: "—";
+    color: #cbd5e1;
+  }
+
   /* ── Walkthrough mode: bigger targets, fewer columns ── */
   body.walk-mode .items-table { font-size: 0.95rem; }
   body.walk-mode .items-table td { padding: 13px 10px; }
@@ -770,7 +793,7 @@
 <h1>Food Services<br/>Order Guide</h1>
 <p>Last updated July 2026</p>
 <div class="sidebar-stats">
-<div class="sidebar-stat"><strong id="stat-items">589</strong>Items</div>
+<div class="sidebar-stat"><strong id="stat-items">632</strong>Items</div>
 <div class="sidebar-stat"><strong>15</strong>Vendors</div>
 </div>
 </div>
@@ -779,7 +802,7 @@
 </div>
 <nav class="sidebar-nav">
 <ul id="navList">
-<li class="nav-section-label">📦 Delivery Accounts</li><li><a class="nav-link" data-type="delivery" href="#vv" style="--accent:#2563EB"><span class="nav-vendor-name">Veritable Vegetable</span><span class="nav-count" id="nav-count-vv">74</span></a></li><li><a class="nav-link" data-type="delivery" href="#dairy" style="--accent:#2563EB"><span class="nav-vendor-name">Dairy Delivery Inc.</span><span class="nav-count" id="nav-count-dairy">22</span></a></li><li><a class="nav-link" data-type="delivery" href="#unfi" style="--accent:#2563EB"><span class="nav-vendor-name">UNFI (United Natural Foods)</span><span class="nav-count" id="nav-count-unfi">64</span></a></li><li><a class="nav-link" data-type="delivery" href="#usfoods" style="--accent:#2563EB"><span class="nav-vendor-name">US Foods Chef'Store</span><span class="nav-count" id="nav-count-usfoods">84</span></a></li><li class="nav-section-label">🖥️ Online Orders</li><li><a class="nav-link" data-type="online" href="#amazon" style="--accent:#059669"><span class="nav-vendor-name">Amazon</span><span class="nav-count" id="nav-count-amazon">51</span></a></li><li><a class="nav-link" data-type="online" href="#webstaurant" style="--accent:#059669"><span class="nav-vendor-name">WebstaurantStore</span><span class="nav-count" id="nav-count-webstaurant">24</span></a></li><li><a class="nav-link" data-type="online" href="#bettymills" style="--accent:#059669"><span class="nav-vendor-name">BettyMills</span><span class="nav-count" id="nav-count-bettymills">1</span></a></li><li><a class="nav-link" data-type="online" href="#econoco" style="--accent:#059669"><span class="nav-vendor-name">Econoco</span><span class="nav-count" id="nav-count-econoco">1</span></a></li><li><a class="nav-link" data-type="online" href="#vxb" style="--accent:#059669"><span class="nav-vendor-name">VXB.com</span><span class="nav-count" id="nav-count-vxb">1</span></a></li><li class="nav-section-label">🏪 In-Store</li><li><a class="nav-link" data-type="instore" href="#berkeleybowl" style="--accent:#d97706"><span class="nav-vendor-name">Berkeley Bowl</span><span class="nav-count" id="nav-count-berkeleybowl">113</span></a></li><li><a class="nav-link" data-type="instore" href="#costco" style="--accent:#d97706"><span class="nav-vendor-name">Costco</span><span class="nav-count" id="nav-count-costco">59</span></a></li><li><a class="nav-link" data-type="instore" href="#milan" style="--accent:#d97706"><span class="nav-vendor-name">Milan International</span><span class="nav-count" id="nav-count-milan">41</span></a></li><li><a class="nav-link" data-type="instore" href="#traderjoes" style="--accent:#d97706"><span class="nav-vendor-name">Trader Joe's</span><span class="nav-count" id="nav-count-traderjoes">41</span></a></li><li><a class="nav-link" data-type="instore" href="#viks" style="--accent:#d97706"><span class="nav-vendor-name">Viks Market</span><span class="nav-count" id="nav-count-viks">3</span></a></li><li><a class="nav-link" data-type="instore" href="#target" style="--accent:#d97706"><span class="nav-vendor-name">Target</span><span class="nav-count" id="nav-count-target">1</span></a></li><li><a class="nav-link" data-type="instore" href="#mitierra" style="--accent:#d97706"><span class="nav-vendor-name">Mi Tierra Foods</span><span class="nav-count" id="nav-count-mitierra">6</span></a></li><li><a class="nav-link" data-type="instore" href="#paknsave" style="--accent:#d97706"><span class="nav-vendor-name">Pak'n Save Foods</span><span class="nav-count" id="nav-count-paknsave">1</span></a></li><li><a class="nav-link" data-type="instore" href="#wholefoods" style="--accent:#d97706"><span class="nav-vendor-name">Whole Foods Market</span><span class="nav-count" id="nav-count-wholefoods">2</span></a></li>
+<li class="nav-section-label">📦 Delivery Accounts</li><li><a class="nav-link" data-type="delivery" href="#vv" style="--accent:#2563EB"><span class="nav-vendor-name">Veritable Vegetable</span><span class="nav-count" id="nav-count-vv">74</span></a></li><li><a class="nav-link" data-type="delivery" href="#dairy" style="--accent:#2563EB"><span class="nav-vendor-name">Dairy Delivery Inc.</span><span class="nav-count" id="nav-count-dairy">22</span></a></li><li><a class="nav-link" data-type="delivery" href="#unfi" style="--accent:#2563EB"><span class="nav-vendor-name">UNFI (United Natural Foods)</span><span class="nav-count" id="nav-count-unfi">68</span></a></li><li><a class="nav-link" data-type="delivery" href="#usfoods" style="--accent:#2563EB"><span class="nav-vendor-name">US Foods Chef'Store</span><span class="nav-count" id="nav-count-usfoods">98</span></a></li><li class="nav-section-label">🖥️ Online Orders</li><li><a class="nav-link" data-type="online" href="#amazon" style="--accent:#059669"><span class="nav-vendor-name">Amazon</span><span class="nav-count" id="nav-count-amazon">57</span></a></li><li><a class="nav-link" data-type="online" href="#webstaurant" style="--accent:#059669"><span class="nav-vendor-name">WebstaurantStore</span><span class="nav-count" id="nav-count-webstaurant">26</span></a></li><li><a class="nav-link" data-type="online" href="#bettymills" style="--accent:#059669"><span class="nav-vendor-name">BettyMills</span><span class="nav-count" id="nav-count-bettymills">1</span></a></li><li><a class="nav-link" data-type="online" href="#econoco" style="--accent:#059669"><span class="nav-vendor-name">Econoco</span><span class="nav-count" id="nav-count-econoco">1</span></a></li><li><a class="nav-link" data-type="online" href="#vxb" style="--accent:#059669"><span class="nav-vendor-name">VXB.com</span><span class="nav-count" id="nav-count-vxb">1</span></a></li><li class="nav-section-label">🏪 In-Store</li><li><a class="nav-link" data-type="instore" href="#berkeleybowl" style="--accent:#d97706"><span class="nav-vendor-name">Berkeley Bowl</span><span class="nav-count" id="nav-count-berkeleybowl">120</span></a></li><li><a class="nav-link" data-type="instore" href="#costco" style="--accent:#d97706"><span class="nav-vendor-name">Costco</span><span class="nav-count" id="nav-count-costco">64</span></a></li><li><a class="nav-link" data-type="instore" href="#milan" style="--accent:#d97706"><span class="nav-vendor-name">Milan International</span><span class="nav-count" id="nav-count-milan">41</span></a></li><li><a class="nav-link" data-type="instore" href="#traderjoes" style="--accent:#d97706"><span class="nav-vendor-name">Trader Joe's</span><span class="nav-count" id="nav-count-traderjoes">46</span></a></li><li><a class="nav-link" data-type="instore" href="#viks" style="--accent:#d97706"><span class="nav-vendor-name">Viks Market</span><span class="nav-count" id="nav-count-viks">3</span></a></li><li><a class="nav-link" data-type="instore" href="#target" style="--accent:#d97706"><span class="nav-vendor-name">Target</span><span class="nav-count" id="nav-count-target">1</span></a></li><li><a class="nav-link" data-type="instore" href="#mitierra" style="--accent:#d97706"><span class="nav-vendor-name">Mi Tierra Foods</span><span class="nav-count" id="nav-count-mitierra">6</span></a></li><li><a class="nav-link" data-type="instore" href="#paknsave" style="--accent:#d97706"><span class="nav-vendor-name">Pak'n Save Foods</span><span class="nav-count" id="nav-count-paknsave">1</span></a></li><li><a class="nav-link" data-type="instore" href="#wholefoods" style="--accent:#d97706"><span class="nav-vendor-name">Whole Foods Market</span><span class="nav-count" id="nav-count-wholefoods">2</span></a></li>
 </ul>
 </nav>
 </aside>
@@ -1992,7 +2015,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-unfi"></span><span class="item-count">64 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-unfi"></span><span class="item-count">68 items</span>
 <a class="vendor-order-btn" href="https://www.unfi.com/" style="background:#2563EB" target="_blank">🛒 Open Ordering Site</a>
 </div>
 </div>
@@ -2708,6 +2731,62 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="unfi__9__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__0" onchange="toggleFlag('unfi__9__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Hibiscus<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__0" onclick="toggleRetire('unfi__9__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__9__0">—</span><input class="cell-inp par-inp" id="par-inp-unfi__9__0" maxlength="20" onblur="savePar('unfi__9__0',this.value)" onchange="savePar('unfi__9__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__9__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__9__0" maxlength="20" onblur="saveOqty('unfi__9__0',this.value)" onchange="saveOqty('unfi__9__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No hibiscus tea appears in the guide or on any receipt. The vendor inference rests on concentration: of the 13 tea rows in the guide, 9 are UNFI (Frontier Co-Op Assam unfi__5__0; Equal Exchange Rooibos and Peppermint unfi__6__0/1; Stash Chamomile unfi__6__2; three Taylors of Harrogate unfi__6__3/4/5…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="unfi__9__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__1" onchange="toggleFlag('unfi__9__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Ginger Lemon<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__1" onclick="toggleRetire('unfi__9__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__9__1">—</span><input class="cell-inp par-inp" id="par-inp-unfi__9__1" maxlength="20" onblur="savePar('unfi__9__1',this.value)" onchange="savePar('unfi__9__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__9__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__9__1" maxlength="20" onblur="saveOqty('unfi__9__1',this.value)" onchange="saveOqty('unfi__9__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No lemon-ginger tea row exists in the guide and no receipt line matches. Two data points favor UNFI: it supplies 9 of the guide's 13 tea rows including the contiguous unfi__6__* tea block, and it is the vendor for the guide's only ginger-forward tea, Organic India Tulsi Turmeric Ginger (unfi__6__6),… Possibly the same as “Bulk Organic Ginger Medallions” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="unfi__9__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__2" onchange="toggleFlag('unfi__9__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Herbal blend<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__2" onclick="toggleRetire('unfi__9__2')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__9__2">—</span><input class="cell-inp par-inp" id="par-inp-unfi__9__2" maxlength="20" onblur="savePar('unfi__9__2',this.value)" onchange="savePar('unfi__9__2',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__9__2">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__9__2" maxlength="20" onblur="saveOqty('unfi__9__2',this.value)" onchange="saveOqty('unfi__9__2',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No row is named &quot;Herbal blend,&quot; and the descriptor is generic enough that several guide rows could satisfy it, so no single product can be nominated. The vendor is still identifiable: of the caffeine-free herbal teas in the guide, 5 of 7 are UNFI (Equal Exchange Rooibos unfi__6__0, Equal Exchange Pe… Possibly the same as “Lundberg Wild Blend Rice” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="unfi__9__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-unfi__9__3" onchange="toggleFlag('unfi__9__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Throat Coat<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-unfi__9__3" onclick="toggleRetire('unfi__9__3')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-unfi__9__3">—</span><input class="cell-inp par-inp" id="par-inp-unfi__9__3" maxlength="20" onblur="savePar('unfi__9__3',this.value)" onchange="savePar('unfi__9__3',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-unfi__9__3">—</span><input class="cell-inp oqty-inp" id="oqty-inp-unfi__9__3" maxlength="20" onblur="saveOqty('unfi__9__3',this.value)" onchange="saveOqty('unfi__9__3',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Teas). Vendor inferred, not read off a receipt. Why: No guide row or receipt line for Throat Coat. But the guide's tea program is concentrated at UNFI: 9 of the 14 tea rows are UNFI wholesale cases (Frontier Assam, Equal Exchange Rooibos and Peppermint, Stash Chamomile, three Taylors of Harrogate, two Organic India Tulsi), including all the herbal/wel…</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="none" data-type="delivery" id="usfoods">
@@ -2721,7 +2800,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-usfoods"></span><span class="item-count">84 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-usfoods"></span><span class="item-count">98 items</span>
 <a class="vendor-order-btn" href="https://www.chefstore.com/" style="background:#2563EB" target="_blank">🛒 Open Ordering Site</a>
 </div>
 </div>
@@ -3682,6 +3761,152 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="usfoods__10__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__0" onchange="toggleFlag('usfoods__10__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Cholula Hot Sauce<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__0" onclick="toggleRetire('usfoods__10__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__0">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__0" maxlength="20" onblur="savePar('usfoods__10__0',this.value)" onchange="savePar('usfoods__10__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__0" maxlength="20" onblur="saveOqty('usfoods__10__0',this.value)" onchange="saveOqty('usfoods__10__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Cholula is a glass-bottle hot sauce and US Foods is the only vendor with hot sauce in this data: two rows, glass bottle $4.09 and red plastic jug $18.99, both confirmed by receipt lines (the glass-bottle line shows two prices, $4.09 and $7.69, so there are likely two glass-bottle SKUs). The register… Possibly the same as “Hot Sauce, Red (Plastic Jug)” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__1" onchange="toggleFlag('usfoods__10__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Heinz Organic Ketchup<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__1" onclick="toggleRetire('usfoods__10__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__1">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__1" maxlength="20" onblur="savePar('usfoods__10__1',this.value)" onchange="savePar('usfoods__10__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__1" maxlength="20" onblur="saveOqty('usfoods__10__1',this.value)" onchange="saveOqty('usfoods__10__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Ketchup appears nowhere — not one guide row, not one receipt line, at any vendor. The only basis for naming a vendor is that every shelf-stable condiment in the guide is US Foods Chef'Store. Weigh that against real counter-evidence: the US Foods condiments are unbranded foodservice packs, whereas 'H…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__2" onchange="toggleFlag('usfoods__10__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">French’s Organic Mustard<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__2" onclick="toggleRetire('usfoods__10__2')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__2">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__2" maxlength="20" onblur="savePar('usfoods__10__2',this.value)" onchange="savePar('usfoods__10__2',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__2">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__2" maxlength="20" onblur="saveOqty('usfoods__10__2',this.value)" onchange="saveOqty('usfoods__10__2',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: French's is yellow prepared mustard — a different product from the guide's dijon, so this is not a product match. The only prepared mustard anywhere in the data is that US Foods dijon (the only other 'mustard' hits are Milan's black mustard SEED and Berkeley Bowl's mustard GREENS, neither of which i… Possibly the same as “Dijon Mustard, Glass Jar” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__3" onchange="toggleFlag('usfoods__10__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Grey Poupon Mustard<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__3" onclick="toggleRetire('usfoods__10__3')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__3">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__3" maxlength="20" onblur="savePar('usfoods__10__3',this.value)" onchange="savePar('usfoods__10__3',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__3">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__3" maxlength="20" onblur="saveOqty('usfoods__10__3',this.value)" onchange="saveOqty('usfoods__10__3',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Grey Poupon is dijon, and the guide row is dijon in a glass jar — product type and packaging match exactly, and the row is corroborated by a US Foods receipt line at the same $13.99. The register does not print a brand, so it cannot be confirmed that the jar being bought is Grey Poupon rather than a…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__4" onchange="toggleFlag('usfoods__10__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Tobasco<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__4" onclick="toggleRetire('usfoods__10__4')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__4">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__4" maxlength="20" onblur="savePar('usfoods__10__4',this.value)" onchange="savePar('usfoods__10__4',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__4">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__4" maxlength="20" onblur="saveOqty('usfoods__10__4',this.value)" onchange="saveOqty('usfoods__10__4',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Condiments). Vendor inferred, not read off a receipt. Why: Only two hot-sauce sources exist in the data, both US Foods Chef'Store: usfoods__9__32 'Hot Sauce, Glass Bottle (Shelf-Stable)' ($4.09, receipt SAUCE,HOT GLS BTL SH at $4.09/$7.69) and usfoods__9__25 'Hot Sauce, Red (Plastic Jug)'. Tabasco is a glass-bottle shelf-stable hot sauce, so the glass-bottl…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__5" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__5" onchange="toggleFlag('usfoods__10__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Swiss Miss Milk Chocolate Powder<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__5" onclick="toggleRetire('usfoods__10__5')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__5">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__5" maxlength="20" onblur="savePar('usfoods__10__5',this.value)" onchange="savePar('usfoods__10__5',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__5">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__5" maxlength="20" onblur="saveOqty('usfoods__10__5',this.value)" onchange="saveOqty('usfoods__10__5',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Miscellaneous Food Stuff). Vendor set by Colton 2026-07-30 (best guess, not from a receipt). Possibly the same as “Milk Chocolate Candy Bars” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__6" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__6" onchange="toggleFlag('usfoods__10__6',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Frigo Cheese Heads String Cheese<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__6" onclick="toggleRetire('usfoods__10__6')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__6">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__6" maxlength="20" onblur="savePar('usfoods__10__6',this.value)" onchange="savePar('usfoods__10__6',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__6">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__6" maxlength="20" onblur="saveOqty('usfoods__10__6',this.value)" onchange="saveOqty('usfoods__10__6',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Beverage Reach-In Items). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__7" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__7" onchange="toggleFlag('usfoods__10__7',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Folgers Instant Classic Roast<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__7" onclick="toggleRetire('usfoods__10__7')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__7">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__7" maxlength="20" onblur="savePar('usfoods__10__7',this.value)" onchange="savePar('usfoods__10__7',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__7">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__7" maxlength="20" onblur="saveOqty('usfoods__10__7',this.value)" onchange="saveOqty('usfoods__10__7',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Coffees and Teas). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__8" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__8" onchange="toggleFlag('usfoods__10__8',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Raw Sugar<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__8" onclick="toggleRetire('usfoods__10__8')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__8">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__8" maxlength="20" onblur="savePar('usfoods__10__8',this.value)" onchange="savePar('usfoods__10__8',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__8">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__8" maxlength="20" onblur="saveOqty('usfoods__10__8',this.value)" onchange="saveOqty('usfoods__10__8',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Sweeteners). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__9" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__9" onchange="toggleFlag('usfoods__10__9',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Stevia<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__9" onclick="toggleRetire('usfoods__10__9')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__9">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__9" maxlength="20" onblur="savePar('usfoods__10__9',this.value)" onchange="savePar('usfoods__10__9',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__9">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__9" maxlength="20" onblur="saveOqty('usfoods__10__9',this.value)" onchange="saveOqty('usfoods__10__9',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Sweeteners). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__10" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__10" onchange="toggleFlag('usfoods__10__10',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">White Sugar<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__10" onclick="toggleRetire('usfoods__10__10')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__10">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__10" maxlength="20" onblur="savePar('usfoods__10__10',this.value)" onchange="savePar('usfoods__10__10',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__10">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__10" maxlength="20" onblur="saveOqty('usfoods__10__10',this.value)" onchange="saveOqty('usfoods__10__10',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Sweeteners). Vendor set by Colton 2026-07-30 (best guess, not from a receipt). Possibly the same as “Distilled White Vinegar” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__11" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__11" onchange="toggleFlag('usfoods__10__11',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Cheerios<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__11" onclick="toggleRetire('usfoods__10__11')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__11">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__11" maxlength="20" onblur="savePar('usfoods__10__11',this.value)" onchange="savePar('usfoods__10__11',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__11">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__11" maxlength="20" onblur="saveOqty('usfoods__10__11',this.value)" onchange="saveOqty('usfoods__10__11',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Cereals and Snacks). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__12" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__12" onchange="toggleFlag('usfoods__10__12',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Smaller white paper bags<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__12" onclick="toggleRetire('usfoods__10__12')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__12">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__12" maxlength="20" onblur="savePar('usfoods__10__12',this.value)" onchange="savePar('usfoods__10__12',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__12">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__12" maxlength="20" onblur="saveOqty('usfoods__10__12',this.value)" onchange="saveOqty('usfoods__10__12',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (To Go Items). Vendor inferred, not read off a receipt. Why: US Foods holds the only paper carry-out bags in the guide, and the 2 Lb is the smaller of its two sizes — a natural fit for 'Smaller.' I am stopping short of SOURCED_FROM_GUIDE because the checklist deliberately distinguishes white from brown and the guide row states no color; small carry-out bags c…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="usfoods__10__13" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-usfoods__10__13" onchange="toggleFlag('usfoods__10__13',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Dishwashing detergent<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-usfoods__10__13" onclick="toggleRetire('usfoods__10__13')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-usfoods__10__13">—</span><input class="cell-inp par-inp" id="par-inp-usfoods__10__13" maxlength="20" onblur="savePar('usfoods__10__13',this.value)" onchange="savePar('usfoods__10__13',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-usfoods__10__13">—</span><input class="cell-inp oqty-inp" id="oqty-inp-usfoods__10__13" maxlength="20" onblur="saveOqty('usfoods__10__13',this.value)" onchange="saveOqty('usfoods__10__13',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Cleaning Supplies). Vendor read off a July 2026 receipt. Possibly the same as “Pot &amp; Pan Detergent” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="order" data-type="online" id="amazon">
@@ -3695,7 +3920,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-amazon"></span><span class="item-count">51 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-amazon"></span><span class="item-count">57 items</span>
 <a class="vendor-order-btn" href="https://www.amazon.com/" style="background:#059669" target="_blank">🛒 Open Ordering Site</a>
 </div>
 </div>
@@ -4018,6 +4243,80 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="amazon__5__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-amazon__5__0" onchange="toggleFlag('amazon__5__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Coffee<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-amazon__5__0" onclick="toggleRetire('amazon__5__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-amazon__5__0">—</span><input class="cell-inp par-inp" id="par-inp-amazon__5__0" maxlength="20" onblur="savePar('amazon__5__0',this.value)" onchange="savePar('amazon__5__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-amazon__5__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-amazon__5__0" maxlength="20" onblur="saveOqty('amazon__5__0',this.value)" onchange="saveOqty('amazon__5__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Coffees and Teas). Vendor inferred, not read off a receipt. Why: No receipt line anywhere mentions coffee, and no guide row is a plain/generic coffee. All catalogued coffee sits in just two places: Amazon (amazon__0__18 Equal Exchange espresso whole bean, amazon__0__19 Mount Hagen instant decaf) and UNFI (unfi__8__16 Mount Hagen decaf bags, plus unfi__8__18 Pero,…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="amazon__5__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-amazon__5__1" onchange="toggleFlag('amazon__5__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Ground Coffee for Coffee Maker<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-amazon__5__1" onclick="toggleRetire('amazon__5__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-amazon__5__1">—</span><input class="cell-inp par-inp" id="par-inp-amazon__5__1" maxlength="20" onblur="savePar('amazon__5__1',this.value)" onchange="savePar('amazon__5__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-amazon__5__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-amazon__5__1" maxlength="20" onblur="saveOqty('amazon__5__1',this.value)" onchange="saveOqty('amazon__5__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Coffees and Teas). Vendor inferred, not read off a receipt. Why: Nothing in the guide or the receipts is ground drip coffee — the guide's coffee rows are whole-bean espresso (amazon__0__18), instant decaf packets (amazon__0__19), Mount Hagen decaf bags (unfi__8__16), and Pero (unfi__8__18, a substitute). Amazon is where the caffeinated bean coffee is bought, so i…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="amazon__5__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-amazon__5__2" onchange="toggleFlag('amazon__5__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Pint size freezer<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-amazon__5__2" onclick="toggleRetire('amazon__5__2')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-amazon__5__2">—</span><input class="cell-inp par-inp" id="par-inp-amazon__5__2" maxlength="20" onblur="savePar('amazon__5__2',this.value)" onchange="savePar('amazon__5__2',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-amazon__5__2">—</span><input class="cell-inp oqty-inp" id="oqty-inp-amazon__5__2" maxlength="20" onblur="saveOqty('amazon__5__2',this.value)" onchange="saveOqty('amazon__5__2',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Zip Lock Storage Bags). Vendor inferred, not read off a receipt. Why: No pint freezer bag exists in the guide or on any receipt. However the only FREEZER-grade Ziploc anywhere in the data is Amazon's quart freezer bag row (amazon__1__4, $12.48), sitting in Amazon's cleaning/janitorial supply category. Freezer bags are bought from Amazon and storage bags from Costco in…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="amazon__5__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-amazon__5__3" onchange="toggleFlag('amazon__5__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Gallon size freezer<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-amazon__5__3" onclick="toggleRetire('amazon__5__3')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-amazon__5__3">—</span><input class="cell-inp par-inp" id="par-inp-amazon__5__3" maxlength="20" onblur="savePar('amazon__5__3',this.value)" onchange="savePar('amazon__5__3',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-amazon__5__3">—</span><input class="cell-inp oqty-inp" id="oqty-inp-amazon__5__3" maxlength="20" onblur="saveOqty('amazon__5__3',this.value)" onchange="saveOqty('amazon__5__3',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Zip Lock Storage Bags). Vendor inferred, not read off a receipt. Why: No gallon freezer bag row or receipt line exists. The single freezer-grade Ziploc in the dataset is Amazon's quart freezer bag (amazon__1__4, $12.48); the only other Ziploc product, Costco's variety pack, is explicitly storage/non-freezer. That clean split makes Amazon the likely source for the gall…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="amazon__5__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-amazon__5__4" onchange="toggleFlag('amazon__5__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Sponges<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-amazon__5__4" onclick="toggleRetire('amazon__5__4')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-amazon__5__4">—</span><input class="cell-inp par-inp" id="par-inp-amazon__5__4" maxlength="20" onblur="savePar('amazon__5__4',this.value)" onchange="savePar('amazon__5__4',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-amazon__5__4">—</span><input class="cell-inp oqty-inp" id="oqty-inp-amazon__5__4" maxlength="20" onblur="saveOqty('amazon__5__4',this.value)" onchange="saveOqty('amazon__5__4',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Cleaning Supplies). Vendor inferred, not read off a receipt. Why: No sponge, scrub pad, or scouring pad appears in any of the 589 guide rows or 258 receipt lines — I searched sponge/scrub/scour/pad/Scotch/wipe/towel. The dish-and-sink cleaning sundries cluster in the guide is concentrated at Amazon (16 of roughly 22 household-cleaning rows, including the Scotch-Br…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="amazon__5__5" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-amazon__5__5" onchange="toggleFlag('amazon__5__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Dr. Bronner’s Sal Suds cleaner<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-amazon__5__5" onclick="toggleRetire('amazon__5__5')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-amazon__5__5">—</span><input class="cell-inp par-inp" id="par-inp-amazon__5__5" maxlength="20" onblur="savePar('amazon__5__5',this.value)" onchange="savePar('amazon__5__5',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-amazon__5__5">—</span><input class="cell-inp oqty-inp" id="oqty-inp-amazon__5__5" maxlength="20" onblur="saveOqty('amazon__5__5',this.value)" onchange="saveOqty('amazon__5__5',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Cleaning Supplies). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="order" data-type="online" id="webstaurant">
@@ -4031,7 +4330,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-webstaurant"></span><span class="item-count">24 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-webstaurant"></span><span class="item-count">26 items</span>
 <a class="vendor-order-btn" href="https://www.webstaurantstore.com/" style="background:#059669" target="_blank">🛒 Open Ordering Site</a>
 </div>
 </div>
@@ -4324,6 +4623,44 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="webstaurant__4__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-webstaurant__4__0" onchange="toggleFlag('webstaurant__4__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Stir Sticks<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-webstaurant__4__0" onclick="toggleRetire('webstaurant__4__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-webstaurant__4__0">—</span><input class="cell-inp par-inp" id="par-inp-webstaurant__4__0" maxlength="20" onblur="savePar('webstaurant__4__0',this.value)" onchange="savePar('webstaurant__4__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-webstaurant__4__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-webstaurant__4__0" maxlength="20" onblur="saveOqty('webstaurant__4__0',this.value)" onchange="saveOqty('webstaurant__4__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Coffees and Teas). Vendor inferred, not read off a receipt. Why: No stir stick appears in any receipt or guide row. However the entire coffee-service disposable set is bought from one vendor: WebstaurantStore supplies both cup sleeves (webstaurant__3__4, webstaurant__3__5), both hot cups (webstaurant__3__0, webstaurant__3__2), both travel lids (webstaurant__3__1,…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="webstaurant__4__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-webstaurant__4__1" onchange="toggleFlag('webstaurant__4__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Napkins<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-webstaurant__4__1" onclick="toggleRetire('webstaurant__4__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-webstaurant__4__1">—</span><input class="cell-inp par-inp" id="par-inp-webstaurant__4__1" maxlength="20" onblur="savePar('webstaurant__4__1',this.value)" onchange="savePar('webstaurant__4__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-webstaurant__4__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-webstaurant__4__1" maxlength="20" onblur="saveOqty('webstaurant__4__1',this.value)" onchange="saveOqty('webstaurant__4__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Paper Products). Vendor inferred, not read off a receipt. Why: No napkin row and no receipt line — the only napkin hit is a napkin BAND, which is the paper strip used to wrap rolled napkins, not napkins themselves, so I have not matched it as the product. It is strong adjacency evidence though: the band is useless without napkins, and it is bought from Webstaur…</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="order" data-type="online" id="bettymills">
@@ -4478,7 +4815,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-berkeleybowl"></span><span class="item-count">113 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-berkeleybowl"></span><span class="item-count">120 items</span>
 <a class="vendor-order-btn" href="https://shop.berkeleybowl.com/" style="background:#d97706" target="_blank">🛒 Open Ordering Site</a>
 </div>
 </div>
@@ -5658,6 +5995,89 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="berkeleybowl__8__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__0" onchange="toggleFlag('berkeleybowl__8__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Canyon House GF 100% Grain Bread<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__0" onclick="toggleRetire('berkeleybowl__8__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__0">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__0" maxlength="20" onblur="savePar('berkeleybowl__8__0',this.value)" onchange="savePar('berkeleybowl__8__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__0" maxlength="20" onblur="saveOqty('berkeleybowl__8__0',this.value)" onchange="saveOqty('berkeleybowl__8__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor inferred, not read off a receipt. Why: No 'Canyon' (Canyon Bakehouse) row in the guide and no such receipt line. Every BRANDED gluten-free loaf in the data sits at Berkeley Bowl — four rows (Udi's Whole Grain, Udi's White, Udi's Omega Flax, Rr GF White Sourdough), three of them corroborated by Berkeley Bowl receipt lines UDI GF BRD MULTI… Possibly the same as “Orowheat Organic 100% Whole Grain Bread” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="berkeleybowl__8__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__1" onchange="toggleFlag('berkeleybowl__8__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Oats GF Ancient Grain Omega Flax &amp; Fiber<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__1" onclick="toggleRetire('berkeleybowl__8__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__1">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__1" maxlength="20" onblur="savePar('berkeleybowl__8__1',this.value)" onchange="savePar('berkeleybowl__8__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__1" maxlength="20" onblur="saveOqty('berkeleybowl__8__1',this.value)" onchange="saveOqty('berkeleybowl__8__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor read off a July 2026 receipt. Possibly the same as “Udi's Gluten Free Omega Flax &amp; Fiber Bread (Frozen)” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="berkeleybowl__8__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__2" onchange="toggleFlag('berkeleybowl__8__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Earth Balance Original Spread<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__2" onclick="toggleRetire('berkeleybowl__8__2')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__2">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__2" maxlength="20" onblur="savePar('berkeleybowl__8__2',this.value)" onchange="savePar('berkeleybowl__8__2',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__2">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__2" maxlength="20" onblur="saveOqty('berkeleybowl__8__2',this.value)" onchange="saveOqty('berkeleybowl__8__2',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="berkeleybowl__8__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__3" onchange="toggleFlag('berkeleybowl__8__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Smucker's Concord Grape Jam<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__3" onclick="toggleRetire('berkeleybowl__8__3')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__3">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__3" maxlength="20" onblur="savePar('berkeleybowl__8__3',this.value)" onchange="savePar('berkeleybowl__8__3',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__3">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__3" maxlength="20" onblur="saveOqty('berkeleybowl__8__3',this.value)" onchange="saveOqty('berkeleybowl__8__3',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="berkeleybowl__8__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__4" onchange="toggleFlag('berkeleybowl__8__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Sunflower Seed Spread<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__4" onclick="toggleRetire('berkeleybowl__8__4')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__4">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__4" maxlength="20" onblur="savePar('berkeleybowl__8__4',this.value)" onchange="savePar('berkeleybowl__8__4',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__4">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__4" maxlength="20" onblur="saveOqty('berkeleybowl__8__4',this.value)" onchange="saveOqty('berkeleybowl__8__4',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Nut and Seed Butters). Vendor set by Colton 2026-07-30 (best guess, not from a receipt).</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="berkeleybowl__8__5" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__5" onchange="toggleFlag('berkeleybowl__8__5',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Mixed Nuts<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__5" onclick="toggleRetire('berkeleybowl__8__5')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__5">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__5" maxlength="20" onblur="savePar('berkeleybowl__8__5',this.value)" onchange="savePar('berkeleybowl__8__5',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__5">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__5" maxlength="20" onblur="saveOqty('berkeleybowl__8__5',this.value)" onchange="saveOqty('berkeleybowl__8__5',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Beverage Reach-In Items). Vendor inferred, not read off a receipt. Why: No mixed-nuts product exists in either dataset. Nuts are spread across four vendors, so this is weaker than a clean single-vendor pattern: UNFI has wholesale case sizes (Bulk Organic Walnuts unfi__1__5, Woodstock Pecan Halves unfi__1__7, Bulk Organic Cashew Pieces unfi__8__8), Milan has 5 lb ethnic-… Possibly the same as “Organic Raw Brazil Nuts (Bulk)” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="berkeleybowl__8__6" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-berkeleybowl__8__6" onchange="toggleFlag('berkeleybowl__8__6',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Seventh Generation Table Spray<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-berkeleybowl__8__6" onclick="toggleRetire('berkeleybowl__8__6')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-berkeleybowl__8__6">—</span><input class="cell-inp par-inp" id="par-inp-berkeleybowl__8__6" maxlength="20" onblur="savePar('berkeleybowl__8__6',this.value)" onchange="savePar('berkeleybowl__8__6',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-berkeleybowl__8__6">—</span><input class="cell-inp oqty-inp" id="oqty-inp-berkeleybowl__8__6" maxlength="20" onblur="saveOqty('berkeleybowl__8__6',this.value)" onchange="saveOqty('berkeleybowl__8__6',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Cleaning Supplies). Vendor read off a July 2026 receipt. Possibly the same as “Seventh Generation Multi-Surface Cleaner” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="checklist" data-type="instore" id="costco">
@@ -5671,7 +6091,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-costco"></span><span class="item-count">59 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-costco"></span><span class="item-count">64 items</span>
 <a class="vendor-order-btn" href="https://www.costco.com/" style="background:#d97706" target="_blank">🛒 Open Ordering Site</a>
 </div>
 </div>
@@ -6347,6 +6767,71 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="costco__7__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__0" onchange="toggleFlag('costco__7__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Rudi's GF Sourdough Bread + Regular Sourdough<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__0" onclick="toggleRetire('costco__7__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-costco__7__0">—</span><input class="cell-inp par-inp" id="par-inp-costco__7__0" maxlength="20" onblur="savePar('costco__7__0',this.value)" onchange="savePar('costco__7__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-costco__7__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-costco__7__0" maxlength="20" onblur="saveOqty('costco__7__0',this.value)" onchange="saveOqty('costco__7__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor read off a July 2026 receipt. Possibly the same as “Sourdough Bread” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="costco__7__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__1" onchange="toggleFlag('costco__7__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Bagels - Wheat<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__1" onclick="toggleRetire('costco__7__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-costco__7__1">—</span><input class="cell-inp par-inp" id="par-inp-costco__7__1" maxlength="20" onblur="savePar('costco__7__1',this.value)" onchange="savePar('costco__7__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-costco__7__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-costco__7__1" maxlength="20" onblur="saveOqty('costco__7__1',this.value)" onchange="saveOqty('costco__7__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Breads). Vendor inferred, not read off a receipt. Why: No wheat bagel exists in the guide or on any receipt. All four bagel rows in the guide are Costco, three confirmed by Costco receipt lines ET BAGEL 8CT, PL BAGEL 8CT, PARM BAGEL 8; the only non-Costco bagel anywhere is TJ's Gluten Free Almond Flour Bagels. Costco is where bagels are bought, but the … Possibly the same as “Bagels” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="costco__7__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__2" onchange="toggleFlag('costco__7__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Strauss Organic Low Fat European Style Yogurt<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__2" onclick="toggleRetire('costco__7__2')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-costco__7__2">—</span><input class="cell-inp par-inp" id="par-inp-costco__7__2" maxlength="20" onblur="savePar('costco__7__2',this.value)" onchange="savePar('costco__7__2',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-costco__7__2">—</span><input class="cell-inp oqty-inp" id="oqty-inp-costco__7__2" maxlength="20" onblur="saveOqty('costco__7__2',this.value)" onchange="saveOqty('costco__7__2',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Milks (Dairy &amp; Non-Dairy)). Vendor read off a July 2026 receipt. Possibly the same as “Organic 2% Low-Fat Yogurt” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="costco__7__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__3" onchange="toggleFlag('costco__7__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Snack size storage (not frozen)<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__3" onclick="toggleRetire('costco__7__3')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-costco__7__3">—</span><input class="cell-inp par-inp" id="par-inp-costco__7__3" maxlength="20" onblur="savePar('costco__7__3',this.value)" onchange="savePar('costco__7__3',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-costco__7__3">—</span><input class="cell-inp oqty-inp" id="oqty-inp-costco__7__3" maxlength="20" onblur="saveOqty('costco__7__3',this.value)" onchange="saveOqty('costco__7__3',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Zip Lock Storage Bags). Vendor inferred, not read off a receipt. Why: No snack-size bag appears in any guide row or receipt line. Only two Ziploc products exist in the data: Amazon's quart FREEZER bags and Costco's &quot;Ziploc Storage Bags Variety Pack&quot; ($14.49, confirmed on the 2026-07-17 Costco receipt as ZIPLC VTY PK). Costco is the only non-freezer (&quot;storage&quot;) Ziploc …</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="costco__7__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-costco__7__4" onchange="toggleFlag('costco__7__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Pint size (not frozen)<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-costco__7__4" onclick="toggleRetire('costco__7__4')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-costco__7__4">—</span><input class="cell-inp par-inp" id="par-inp-costco__7__4" maxlength="20" onblur="savePar('costco__7__4',this.value)" onchange="savePar('costco__7__4',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-costco__7__4">—</span><input class="cell-inp oqty-inp" id="oqty-inp-costco__7__4" maxlength="20" onblur="saveOqty('costco__7__4',this.value)" onchange="saveOqty('costco__7__4',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Zip Lock Storage Bags). Vendor inferred, not read off a receipt. Why: Nothing in the guide or receipts names a pint storage bag. Costco's &quot;Ziploc Storage Bags Variety Pack&quot; is the only non-freezer Ziploc product in the data (guide row costco__6__27, corroborated by the 2026-07-17 Costco receipt line ZIPLC VTY PK at $14.49), making Costco the one vendor worth confirmin…</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="checklist" data-type="instore" id="milan">
@@ -6845,7 +7330,7 @@
 </div>
 </div>
 <div class="vendor-header-right">
-<span class="flag-count" hidden="hidden" id="flag-count-traderjoes"></span><span class="item-count">41 items</span>
+<span class="flag-count" hidden="hidden" id="flag-count-traderjoes"></span><span class="item-count">46 items</span>
 </div>
 </div>
 <p class="vendor-notes">In-store purchases. Hours: 9:00 AM – 9:00 PM daily.</p>
@@ -7297,6 +7782,71 @@
 </table>
 </div>
 </div>
+<div class="category-block">
+<h3 class="category-header">❓ Running Low list — source to confirm</h3>
+<div class="table-wrapper">
+<table class="items-table">
+<thead>
+<tr>
+<th class="th-flag" style="width:54px">Need</th><th class="th-name" style="width:25%">Item / Description</th>
+<th class="th-pack" style="width:11%">Pack / Unit</th>
+<th class="th-price" style="width:9%">Last Price</th>
+<th class="th-par" style="width:8%">Par Level</th>
+<th class="th-oqty" style="width:8%">Typical Qty</th>
+<th class="th-notes" style="width:16%">Notes</th>
+<th class="th-link" style="width:10%">Order</th>
+</tr>
+</thead>
+<tbody>
+<tr data-item-id="traderjoes__4__0" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-traderjoes__4__0" onchange="toggleFlag('traderjoes__4__0',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Honey<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-traderjoes__4__0" onclick="toggleRetire('traderjoes__4__0')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-traderjoes__4__0">—</span><input class="cell-inp par-inp" id="par-inp-traderjoes__4__0" maxlength="20" onblur="savePar('traderjoes__4__0',this.value)" onchange="savePar('traderjoes__4__0',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-traderjoes__4__0">—</span><input class="cell-inp oqty-inp" id="oqty-inp-traderjoes__4__0" maxlength="20" onblur="saveOqty('traderjoes__4__0',this.value)" onchange="saveOqty('traderjoes__4__0',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor read off a July 2026 receipt.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="traderjoes__4__1" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-traderjoes__4__1" onchange="toggleFlag('traderjoes__4__1',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Trader Joe's Low Sugar Raspberry Jam<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-traderjoes__4__1" onclick="toggleRetire('traderjoes__4__1')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-traderjoes__4__1">—</span><input class="cell-inp par-inp" id="par-inp-traderjoes__4__1" maxlength="20" onblur="savePar('traderjoes__4__1',this.value)" onchange="savePar('traderjoes__4__1',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-traderjoes__4__1">—</span><input class="cell-inp oqty-inp" id="oqty-inp-traderjoes__4__1" maxlength="20" onblur="saveOqty('traderjoes__4__1',this.value)" onchange="saveOqty('traderjoes__4__1',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor read off a July 2026 receipt.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="traderjoes__4__2" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-traderjoes__4__2" onchange="toggleFlag('traderjoes__4__2',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Trader Joe's Organic Apricot Preserves<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-traderjoes__4__2" onclick="toggleRetire('traderjoes__4__2')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-traderjoes__4__2">—</span><input class="cell-inp par-inp" id="par-inp-traderjoes__4__2" maxlength="20" onblur="savePar('traderjoes__4__2',this.value)" onchange="savePar('traderjoes__4__2',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-traderjoes__4__2">—</span><input class="cell-inp oqty-inp" id="oqty-inp-traderjoes__4__2" maxlength="20" onblur="saveOqty('traderjoes__4__2',this.value)" onchange="saveOqty('traderjoes__4__2',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor read off a July 2026 receipt. Possibly the same as “Reduced Sugar Apricot Preserves” — check before ordering.</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="traderjoes__4__3" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-traderjoes__4__3" onchange="toggleFlag('traderjoes__4__3',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Trader Joe’s Organic Tahini<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-traderjoes__4__3" onclick="toggleRetire('traderjoes__4__3')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-traderjoes__4__3">—</span><input class="cell-inp par-inp" id="par-inp-traderjoes__4__3" maxlength="20" onblur="savePar('traderjoes__4__3',this.value)" onchange="savePar('traderjoes__4__3',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-traderjoes__4__3">—</span><input class="cell-inp oqty-inp" id="oqty-inp-traderjoes__4__3" maxlength="20" onblur="saveOqty('traderjoes__4__3',this.value)" onchange="saveOqty('traderjoes__4__3',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Jams, Jellies, Butters and Spreads). Vendor inferred, not read off a receipt. Why: A Trader Joe's private-label product can only be bought at Trader Joe's, and Trader Joe's is an established vendor here (41 guide rows, 43 receipt lines). No tahini appears on any TJ's receipt and there is no TJ's tahini row, so no specific product can be pointed at. Do NOT map this to the UNFI Once…</td>
+<td class="item-link"></td>
+</tr>
+<tr data-item-id="traderjoes__4__4" data-source="guess"><td class="item-flag"><label class="flag-wrap" title="Mark as needing replenishment"><input aria-label="Needs replenishing" class="flag-box" id="flag-traderjoes__4__4" onchange="toggleFlag('traderjoes__4__4',this.checked)" type="checkbox"/><span class="flag-ui"></span></label></td>
+<td class="item-name">Trader Joe's Almond Granola<span class="unconfirmed" title="Vendor is a best guess, not confirmed from a receipt — correct it when you know">source?</span><button class="retire-btn" id="ret-traderjoes__4__4" onclick="toggleRetire('traderjoes__4__4')" title="Retire this item">Retire</button></td>
+<td class="item-pack"></td>
+<td class="item-price"></td>
+<td class="item-par"><span class="cell-disp par-disp" id="par-disp-traderjoes__4__4">—</span><input class="cell-inp par-inp" id="par-inp-traderjoes__4__4" maxlength="20" onblur="savePar('traderjoes__4__4',this.value)" onchange="savePar('traderjoes__4__4',this.value)" placeholder="e.g. 2" type="text"/></td>
+<td class="item-oqty"><span class="cell-disp oqty-disp" id="oqty-disp-traderjoes__4__4">—</span><input class="cell-inp oqty-inp" id="oqty-inp-traderjoes__4__4" maxlength="20" onblur="saveOqty('traderjoes__4__4',this.value)" onchange="saveOqty('traderjoes__4__4',this.value)" placeholder="e.g. 1 cs" type="text"/></td>
+<td class="item-notes">From the Amrit Running Low walkthrough list (Cereals and Snacks). Vendor inferred, not read off a receipt. Why: The item names a private-label product that is only sold in Trader Joe's own stores, and Trader Joe's is an active vendor here (41 guide rows, 43 receipt lines across the scanned receipts), so the store is confirmed as a place this kitchen actually shops. No granola row exists under Trader Joe's in …</td>
+<td class="item-link"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </section>
 <section class="vendor-section" data-mode="checklist" data-type="instore" id="viks">
@@ -7718,8 +8268,9 @@ function rowName(row) {
   const cell = row.querySelector('.item-name');
   if (!cell) return '';
   const clone = cell.cloneNode(true);
-  // Strip the controls and the SKU chip so the display name stays clean.
-  clone.querySelectorAll('.retire-btn, .mfr-sku').forEach(b => b.remove());
+  // Strip the controls and every badge so the display name stays clean — these
+  // are decorations on the cell, not part of the product name.
+  clone.querySelectorAll('.retire-btn, .mfr-sku, .unconfirmed').forEach(b => b.remove());
   return clone.textContent.replace(/\s+/g, ' ').trim();
 }
 // Manufacturer part number (e.g. World Centric "BO-PA-8") — what's printed on
@@ -8044,7 +8595,8 @@ function collectFlagged() {
       oqty: getOqty(id),
       url: row.dataset.productUrl || '',
       mfrSku: row.dataset.mfrSku || '',   // printed on the carton
-      sku: row.dataset.sku || ''          // reseller item number, for ordering
+      sku: row.dataset.sku || '',         // reseller item number, for ordering
+      unconfirmed: row.dataset.source === 'guess'
     });
   });
   return Array.from(groups.values()).sort((a, b) =>
@@ -8124,6 +8676,9 @@ function renderGroup(g) {
         // Manufacturer SKU prints on the checklist so whoever is holding the box
         // can match it; the reseller item number is for whoever places the order.
         (i.mfrSku ? ' <span class="mfr-sku">' + esc(i.mfrSku) + '</span>' : '') +
+        // Carry the unconfirmed-source marker onto the printed list too — whoever
+        // walks into the store should know this vendor was never verified.
+        (i.unconfirmed ? ' <span class="unconfirmed">source?</span>' : '') +
         (i.notes ? ' <span class="rp-item-meta">— ' + esc(i.notes) + '</span>' : '') +
       '</span>' +
       (qty ? '<span class="rp-qty">' + esc(qty) + '</span>' : '') +
