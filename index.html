@@ -8689,30 +8689,54 @@ function copyWebstaurantSkus() {
     lines.length + ' WebstaurantStore item numbers copied as "item,qty" lines.');
 }
 
+// Display name for the copied list. Keep the catalog wording; only drop an
+// obviously truncated tail already in the data (Amazon titles cut mid-word,
+// e.g. "…Organizer And St").
+function copyItemName(name) {
+  let s = String(name || '').replace(/\s+/g, ' ').trim();
+  if (s.length > 80 && /(?:^|[\s,;:\-–—])[A-Za-z]{1,3}$/.test(s)) {
+    const comma = s.lastIndexOf(',');
+    if (comma >= 24) s = s.slice(0, comma).trim();
+    else s = s.replace(/[\s,;:\-–—]+[A-Za-z]{1,3}$/, '').trim();
+  }
+  return s;
+}
+
+// Prefer the walkthrough qty (order qty, then PAR). If neither is set, use the
+// pack size already on the row. "Qty 1" pack labels become "qty 1" so they
+// match a typed qty; case packs like "1,000/Case" or "Qt" stay as-is.
+function copyItemQtyLabel(i) {
+  const qty = String(i.oqty || i.par || '').trim();
+  if (qty) return 'qty ' + qty;
+  const pack = String(i.pack || '').trim();
+  if (!pack) return '';
+  const m = /^qty\s+(.+)$/i.exec(pack);
+  return m ? 'qty ' + m[1] : pack;
+}
+
 function copyAllFlagged() {
   const groups = collectFlagged();
   if (!groups.length) { alert('Nothing flagged yet.'); return; }
   const out = ['SYAO Food Services — Replenishment List',
                new Date().toLocaleDateString(), ''];
   groups.forEach(g => {
-    out.push('== ' + g.vendorName + ' (' + (MODE_LABEL[g.mode] || g.mode) + ') ==');
+    out.push(g.vendorName);
     g.items.forEach(i => {
-      const bits = [i.name];
-      const qty = i.oqty || i.par;
-      if (qty) bits.push('qty ' + qty);
-      if (i.pack) bits.push(i.pack);
-      // Both SKUs: the manufacturer's is what's on the box you're checking, the
-      // reseller's is what you type in to order it.
-      if (i.mfrSku) bits.push('box #' + i.mfrSku);
-      if (i.sku) bits.push('order #' + i.sku);
-      if (i.url) bits.push(i.url);
-      out.push('  [ ] ' + bits.join('  |  '));
+      const name = copyItemName(i.name);
+      const qty = copyItemQtyLabel(i);
+      out.push(qty ? '• ' + name + ' — ' + qty : '• ' + name);
+      // Online vendors only. A URL on the same line as the name wraps badly in
+      // Gmail; keep it on the next indented line. Rep/account vendors (Dairy,
+      // UNFI, Chef'Store, …) get no link.
+      if (g.mode === 'order' && i.url) out.push('  ' + i.url);
     });
     out.push('');
   });
   copyText(out.join('\n'), 'Replenishment list copied to the clipboard.');
 }
 
+// Plain text only. writeText and the textarea fallback both set text/plain;
+// we never write text/html, so Gmail paste stays bullets instead of a table.
 function copyText(text, okMsg) {
   if (!text) { alert('Nothing to copy.'); return; }
   const done = () => alert(okMsg || 'Copied.');
