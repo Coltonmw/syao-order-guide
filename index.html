@@ -8571,7 +8571,7 @@ function renderGroup(g) {
   let subtotal = 0, priced = 0, unpriced = 0;
   const items = g.items.map(i => {
     const meta = [i.pack, i.price].filter(Boolean).join(' · ');
-    const qty  = i.oqty || i.par;
+    const qty  = orderQtyLabel(i);
     const n    = itemQty(i);
     const unit = parseMoney(i.price);
     let lineTotal = null;
@@ -8594,7 +8594,7 @@ function renderGroup(g) {
       '<span class="rp-qty">' +
         '<button type="button" class="qty-step rp-noprint" aria-label="Decrease quantity" ' +
           'onclick="stepReviewQty(\'' + esc(i.id) + '\',-1)">−</button>' +
-        '<span class="qty-val">' + esc(qty || '1') + '</span>' +
+        '<span class="qty-val">' + esc(qty) + '</span>' +
         '<button type="button" class="qty-step rp-noprint" aria-label="Increase quantity" ' +
           'onclick="stepReviewQty(\'' + esc(i.id) + '\',1)">+</button>' +
       '</span>' +
@@ -8633,13 +8633,34 @@ function itemQty(i) {
   return m ? parseFloat(m[1]) : 1;
 }
 
-// Step the leading count on an order-qty label. Same leading-number parse as
-// itemQty: "2" -> "3", "1 cs" -> "2 cs", "1,000/Case" steps the leading 1 and
-// keeps ",000/Case". Labels with no number ("Qt") keep that unit — plus becomes
-// "1 Qt". Floor is 1: itemQty already treats a missing count as 1, and empty
-// oqty is stored as unset (key removed), not 0.
+// Pack sizes are not order quantities. Comma-grouped thousands
+// ("1,000/Case") and slash-units ("500/Case", "6/Pack") stay on the
+// pack field; the stepper writes a separate numeric oqty.
+function isPackLabel(s) {
+  const t = String(s || '').trim();
+  if (!t) return false;
+  if (/\d{1,3}(?:,\d{3})+/.test(t)) return true;
+  if (/\/\s*(case|pack)s?\b/i.test(t)) return true;
+  return false;
+}
+
+// What the stepper shows and steps. Prefer a real order qty (oqty, then
+// par). A pack-style label is ignored so the count starts at 1.
+function orderQtyLabel(i) {
+  const oqty = String((i && i.oqty) || '').trim();
+  if (oqty && !isPackLabel(oqty)) return oqty;
+  const par = String((i && i.par) || '').trim();
+  if (par && !isPackLabel(par)) return par;
+  return '1';
+}
+
+// Step a simple count: "2" -> "3", "1 cs" -> "2 cs". Pack labels are not
+// rewritten — plus starts a separate order qty at 2. Labels with no number
+// ("Qt") keep that unit: plus becomes "1 Qt". Floor is 1: itemQty already
+// treats a missing count as 1, and empty oqty is stored as unset, not 0.
 function steppedQty(raw, delta) {
   const s = String(raw || '').trim();
+  if (isPackLabel(s)) return String(Math.max(1, 1 + delta));
   const m = /^(\d+(?:\.\d+)?)/.exec(s);
   if (m) {
     const next = Math.max(1, parseFloat(m[1]) + delta);
@@ -8651,8 +8672,7 @@ function steppedQty(raw, delta) {
 }
 
 function stepReviewQty(id, delta) {
-  const raw = (getOqty(id) || getPar(id) || '').trim();
-  const next = steppedQty(raw || '1', delta);
+  const next = steppedQty(orderQtyLabel({ oqty: getOqty(id), par: getPar(id) }), delta);
   saveOqty(id, next);
   const inp = document.getElementById('oqty-inp-' + id);
   if (inp) inp.value = next;
