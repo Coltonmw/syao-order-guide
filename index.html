@@ -800,7 +800,7 @@
 
   .rp-list { list-style: none; }
   .rp-item {
-    display: flex; align-items: baseline; gap: 10px;
+    display: flex; align-items: center; gap: 10px;
     padding: 10px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem;
   }
   .rp-item:last-child { border-bottom: none; }
@@ -810,7 +810,20 @@
   }
   .rp-item-name { font-weight: 600; color: #1e293b; flex: 1; }
   .rp-item-meta { color: #64748b; font-size: 0.75rem; white-space: nowrap; }
-  .rp-qty { font-weight: 800; color: #b45309; white-space: nowrap; }
+  .rp-qty {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-weight: 800; color: #b45309; white-space: nowrap; flex-shrink: 0;
+  }
+  .qty-step {
+    width: 44px; height: 44px; min-width: 44px; min-height: 44px;
+    padding: 0; border: 1.5px solid #d97706; border-radius: 8px;
+    background: #fffbeb; color: #92400e;
+    font-family: var(--font); font-size: 1.35rem; font-weight: 800; line-height: 1;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .qty-step:hover { background: #fde68a; }
+  .qty-step:active { background: #fbbf24; }
+  .qty-val { min-width: 2.2em; text-align: center; padding: 0 4px; }
   .rp-nolink {
     font-size: 0.68rem; font-weight: 800; color: #b91c1c; background: #fee2e2;
     padding: 2px 7px; border-radius: 4px; white-space: nowrap;
@@ -8578,7 +8591,13 @@ function renderGroup(g) {
         (i.unconfirmed ? ' <span class="unconfirmed">source?</span>' : '') +
         (i.notes ? ' <span class="rp-item-meta">— ' + esc(i.notes) + '</span>' : '') +
       '</span>' +
-      (qty ? '<span class="rp-qty">' + esc(qty) + '</span>' : '') +
+      '<span class="rp-qty">' +
+        '<button type="button" class="qty-step rp-noprint" aria-label="Decrease quantity" ' +
+          'onclick="stepReviewQty(\'' + esc(i.id) + '\',-1)">−</button>' +
+        '<span class="qty-val">' + esc(qty || '1') + '</span>' +
+        '<button type="button" class="qty-step rp-noprint" aria-label="Increase quantity" ' +
+          'onclick="stepReviewQty(\'' + esc(i.id) + '\',1)">+</button>' +
+      '</span>' +
       (meta ? '<span class="rp-item-meta">' + esc(meta) + '</span>' : '') +
       (g.mode === 'order' && lineTotal !== null && n > 1
         ? '<span class="rp-line">= ' + money(lineTotal) + '</span>' : '') +
@@ -8613,6 +8632,38 @@ function itemQty(i) {
   const m = /^\s*(\d+(?:\.\d+)?)/.exec(i.oqty || i.par || '');
   return m ? parseFloat(m[1]) : 1;
 }
+
+// Step the leading count on an order-qty label. Same leading-number parse as
+// itemQty: "2" -> "3", "1 cs" -> "2 cs", "1,000/Case" steps the leading 1 and
+// keeps ",000/Case". Labels with no number ("Qt") keep that unit — plus becomes
+// "1 Qt". Floor is 1: itemQty already treats a missing count as 1, and empty
+// oqty is stored as unset (key removed), not 0.
+function steppedQty(raw, delta) {
+  const s = String(raw || '').trim();
+  const m = /^(\d+(?:\.\d+)?)/.exec(s);
+  if (m) {
+    const next = Math.max(1, parseFloat(m[1]) + delta);
+    const num = Number.isInteger(next) ? String(next) : String(next);
+    return num + s.slice(m[0].length);
+  }
+  if (delta < 0) return s;
+  return s ? ('1 ' + s) : '1';
+}
+
+function stepReviewQty(id, delta) {
+  const raw = (getOqty(id) || getPar(id) || '').trim();
+  const next = steppedQty(raw || '1', delta);
+  saveOqty(id, next);
+  const inp = document.getElementById('oqty-inp-' + id);
+  if (inp) inp.value = next;
+  if (document.getElementById('reviewPanel').classList.contains('open')) {
+    const body = document.getElementById('rpBody');
+    const top = body ? body.scrollTop : 0;
+    openReview();
+    if (body) body.scrollTop = top;
+  }
+}
+
 // "$84.49" -> 84.49; "$1,234.00" -> 1234; blank or unparseable -> null, never 0,
 // so an unpriced row is reported as unpriced rather than silently costing nothing.
 function parseMoney(s) {
